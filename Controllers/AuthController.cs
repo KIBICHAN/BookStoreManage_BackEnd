@@ -1,40 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
-using BookStoreManage.Repository;
-using DTO;
+using BookStoreManage.DTO;
 
-namespace BookStoreManage.Controllers{
+namespace BookStoreManage.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase{
-        public static AccountModel user = new AccountModel();
-        private readonly IAuthRepository authRepository;
-        public AuthController(IAuthRepository authRepository){
-            this.authRepository = authRepository;
+    public class AuthController : ControllerBase
+    {
+        private readonly IAuthRepository _authRepository;
+        private BookManageContext _context;
+        public AuthController(IAuthRepository authRepository, BookManageContext context)
+        {
+            _authRepository = authRepository;
+            _context = context;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AccountModel>> Register(AccountDto request){
-            authRepository.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            user.AccountName = request.AccountName;
-            user.PasswordHash =  passwordHash;
-            user.PasswordSalt = passwordSalt;
-
-            return Ok(user);
+        public async Task<ActionResult<Account>> Register(AccountDto request)
+        {
+            await _authRepository.Register(request);
+            return Ok(_context.Accounts.ToList());
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(AccountDto request){
-            if(user.AccountName != request.AccountName){
-                return BadRequest("User not found.");
-            }
-            if(!authRepository.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt)){
-                return BadRequest("Wrong password.");
-            }
-
-            return Ok("Here is your token!");
+        public async Task<ActionResult<Account>> Login(AccountDto request)
+        {
+            var acc = await _authRepository.Login(request);
+            string token = _authRepository.CreateToken(acc);
+            return Ok(token);
         }
     }
 }
