@@ -1,4 +1,4 @@
-
+#nullable disable
 using Microsoft.EntityFrameworkCore;
 using BookStoreManage.IRepository;
 using BookStoreManage.Entity;
@@ -20,7 +20,13 @@ public class AuthRepository : IAuthRepository{
         _configuration = configuration;
     }
 
+    public async Task<Account> Get(string username){
+        var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == username);
+        return _acc;
+    }
+
     public async Task<Account> CheckLogin(AuthDto account){
+        // var _acc = await Get(account.UserName);
         var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == account.UserName);
         if(account.UserName == _acc.UserName){
                 if(!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt)){
@@ -36,6 +42,7 @@ public class AuthRepository : IAuthRepository{
         CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
         _account = new Account();
+        Role role = new Role();
         _account.UserName = account.UserName;
         _account.PasswordHash = passwordHash;
         _account.PasswordSalt = passwordSalt;
@@ -79,5 +86,28 @@ public class AuthRepository : IAuthRepository{
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);
         
         return jwt;
+    }
+
+    public RefreshToken GenerateRefreshToken(){
+        var refreshToken = new RefreshToken{
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            Expires = DateTime.Now.AddDays(7),
+            Created = DateTime.Now
+        };
+        return refreshToken;
+    }
+
+    public Account SetRefreshToken(RefreshToken newRefreshToken, HttpResponse response){
+        var cookieOptions = new CookieOptions{
+            HttpOnly = true,
+            Expires = newRefreshToken.Expires
+        };
+        response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
+
+        _account.RefreshToken = newRefreshToken.Token;
+        _account.TokenCreated = newRefreshToken.Created;
+        _account.TokenExpires = newRefreshToken.Expires;
+
+        return _account;
     }
 }

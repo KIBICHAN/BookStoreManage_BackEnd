@@ -11,8 +11,9 @@ namespace BookStoreManage.Controllers
     // [Authorize]
     public class AuthController : ControllerBase
     {
+        private static Account account = new Account();
         private readonly IAuthRepository _authRepository;
-        private BookManageContext _context;
+        private readonly BookManageContext _context;
         public AuthController(IAuthRepository authRepository, BookManageContext context)
         {
             _authRepository = authRepository;
@@ -31,6 +32,33 @@ namespace BookStoreManage.Controllers
         {
             var acc = await _authRepository.CheckLogin(request);
             string token = _authRepository.CreateToken(acc);
+
+            var refreshToken = _authRepository.GenerateRefreshToken();
+            var setToken = _authRepository.SetRefreshToken(refreshToken, Response);
+
+            account = acc;
+            account.RefreshToken = setToken.RefreshToken;
+            account.TokenExpires = setToken.TokenExpires;
+
+            return Ok(token);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<string>> RefreshToken(){
+            var refreshToken = Request.Cookies["refreshToken"];
+            if(!account.RefreshToken.Equals(refreshToken)){
+                return Unauthorized("Invalid Refresh Token.");
+            }else if(account.TokenExpires < DateTime.Now){
+                return Unauthorized("Token expired.");
+            }
+
+            string token = _authRepository.CreateToken(account);
+            var newRefreshToken = _authRepository.GenerateRefreshToken();
+            var setToken = _authRepository.SetRefreshToken(newRefreshToken, Response);
+
+            account.RefreshToken = setToken.RefreshToken;
+            account.TokenExpires = setToken.TokenExpires;
+
             return Ok(token);
         }
 

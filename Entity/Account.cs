@@ -57,5 +57,11 @@ namespace BookStoreManage.Entity
         public virtual Role Role { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }
+
+
+        //RefreshToken "If you gonna migration comment this!"
+        public string RefreshToken { get; set; }
+        public DateTime TokenCreated { get; set; }
+        public DateTime TokenExpires { get; set; }
     }
 }
