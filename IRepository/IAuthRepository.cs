@@ -4,9 +4,7 @@ using BookStoreManage.Entity;
 namespace BookStoreManage.IRepository;
 
 public interface IAuthRepository{
-    Task<Account> Login(AccountDto account);
-    Task Register(AccountDto account);
-    void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
-    bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt );
+    Task<Account> CheckLogin(AuthDto account);
+    Task Register(AuthDto account);
     string CreateToken(Account account);
 }   

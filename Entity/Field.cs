@@ -14,6 +14,6 @@ namespace BookStoreManage.Entity
 
         public string FieldDescription { get; set; }
 
-        public virtual ICollection<Book>? Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
     }
 }

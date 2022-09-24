@@ -20,18 +20,19 @@ public class AuthRepository : IAuthRepository{
         _configuration = configuration;
     }
 
-    public async Task<Account> Login(AccountDto account){
-        var _acc = await _context.Accounts.FirstOrDefaultAsync(a => a.UserName == account.UserName);
-        if(account.UserName != _acc.UserName){
-            throw new BadHttpRequestException("No such as user!");
-        }
-        if(!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt)){
-            throw new BadHttpRequestException("Wrong password!");
+    public async Task<Account> CheckLogin(AuthDto account){
+        var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == account.UserName);
+        if(account.UserName == _acc.UserName){
+                if(!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt)){
+                throw new BadHttpRequestException("Wrong password!");
+            }
+        }else{
+            throw new BadHttpRequestException("No!");
         }
         return _acc;
     }
 
-    public async Task Register(AccountDto account){
+    public async Task Register(AuthDto account){
         CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
         _account = new Account();
@@ -61,7 +62,8 @@ public class AuthRepository : IAuthRepository{
 
     public string CreateToken(Account account){
         List<Claim> claims = new List<Claim>{
-            new Claim(ClaimTypes.Name, account.UserName)
+            new Claim(ClaimTypes.Name, account.UserName),
+            new Claim(ClaimTypes.Role, account.Role.RoleName)
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:TokenSecret").Value));

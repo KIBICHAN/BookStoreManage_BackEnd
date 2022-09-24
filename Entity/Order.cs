@@ -20,9 +20,9 @@ namespace BookStoreManage.Entity
         public DateTime DateOfOrder { get; set; }
 
         [ForeignKey("AccountID")]
-        public virtual Account? Account { get; set; }
+        public virtual Account Account { get; set; }
 
 
-        public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

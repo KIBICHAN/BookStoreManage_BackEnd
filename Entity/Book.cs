@@ -31,14 +31,14 @@ namespace BookStoreManage.Entity
 
 
         [ForeignKey("FieldID")]
-        public virtual Field? Field { get; set; }
+        public virtual Field Field { get; set; }
 
         [ForeignKey("PublisherID")]
-        public virtual Publisher? Publisher { get; set; }
+        public virtual Publisher Publisher { get; set; }
 
         [ForeignKey("AuthorID")]
-        public virtual Author? Author { get; set; }
+        public virtual Author Author { get; set; }
 
-        public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

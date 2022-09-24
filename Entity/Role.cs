@@ -13,7 +13,7 @@ namespace BookStoreManage.Entity
         [Required(ErrorMessage = "Enter Role Name")]
         public string RoleName { get; set; }
 
-        public virtual ICollection<Account>? Accounts { get; set; }
+        public virtual ICollection<Account> Accounts { get; set; }
 
     }
 }

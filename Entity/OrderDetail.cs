@@ -20,9 +20,9 @@ namespace BookStoreManage.Entity
 
 
         [ForeignKey("BookID")]
-        public virtual Book? Book { get; set; }
+        public virtual Book Book { get; set; }
 
         [ForeignKey("OrderID")]
-        public virtual Order? Order { get; set; }
+        public virtual Order Order { get; set; }
     }
 }
