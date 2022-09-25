@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.43.108"), 7132));
 
 // Add services to the container.
-
+builder.Services.AddRazorPages();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -52,6 +52,7 @@ builder.Services.AddDbContext<BookManageContext>(options =>
 });
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IFieldRepository, FieldRepository>();
 
 var app = builder.Build();
 
