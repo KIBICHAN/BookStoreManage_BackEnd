@@ -1,40 +1,77 @@
 using Microsoft.AspNetCore.Mvc;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
-using BookStoreManage.Repository;
-using DTO;
+using BookStoreManage.DTO;
+using Microsoft.AspNetCore.Authorization;
 
-namespace BookStoreManage.Controllers{
+namespace BookStoreManage.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase{
-        public static AccountModel user = new AccountModel();
-        private readonly IAuthRepository authRepository;
-        public AuthController(IAuthRepository authRepository){
-            this.authRepository = authRepository;
+    // [Authorize]
+    public class AuthController : ControllerBase
+    {
+        private static Account? account = new Account();
+        private readonly IAuthRepository _authRepository;
+        private readonly BookManageContext _context;
+        public AuthController(IAuthRepository authRepository, BookManageContext context)
+        {
+            _authRepository = authRepository;
+            _context = context;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<AccountModel>> Register(AccountDto request){
-            authRepository.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            user.AccountName = request.AccountName;
-            user.PasswordHash =  passwordHash;
-            user.PasswordSalt = passwordSalt;
-
-            return Ok(user);
+        public async Task<ActionResult<Account>> Register(AuthDto request)
+        {
+            await _authRepository.Register(request);
+            return Ok(_context.Accounts.ToList());
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(AccountDto request){
-            if(user.AccountName != request.AccountName){
-                return BadRequest("User not found.");
-            }
-            if(!authRepository.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt)){
-                return BadRequest("Wrong password.");
+        public async Task<ActionResult<Account>> Login(AuthDto request)
+        {
+            var acc = await _authRepository.CheckLogin(request);
+            string token = _authRepository.CreateToken(acc);
+
+            var refreshToken = _authRepository.GenerateRefreshToken();
+            var setToken = _authRepository.SetRefreshToken(refreshToken, Response);
+
+            account = acc;
+            account.RefreshToken = setToken.RefreshToken;
+            account.TokenExpires = setToken.TokenExpires;
+
+            return Ok(token);
+        }
+
+        [HttpPost("logout"), Authorize]
+        public ActionResult Logout(){
+            account = null;
+            return Ok();
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<string>> RefreshToken(){
+            var refreshToken = Request.Cookies["refreshToken"];
+            if(!account.RefreshToken.Equals(refreshToken)){
+                return Unauthorized("Invalid Refresh Token.");
+            }else if(account.TokenExpires < DateTime.Now){
+                return Unauthorized("Token expired.");
             }
 
-            return Ok("Here is your token!");
+            string token = _authRepository.CreateToken(account);
+            var newRefreshToken = _authRepository.GenerateRefreshToken();
+            var setToken = _authRepository.SetRefreshToken(newRefreshToken, Response);
+
+            account.RefreshToken = setToken.RefreshToken;
+            account.TokenExpires = setToken.TokenExpires;
+
+            return Ok(token);
+        }
+
+        [HttpGet("authen"), Authorize(Roles = "Admin")]
+        public ActionResult<Account> Authen()
+        {
+            return Ok(_context.Accounts.ToList());
         }
     }
 }

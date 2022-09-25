@@ -1,6 +1,12 @@
+using BookStoreManage.DTO;
+using BookStoreManage.Entity;
+
 namespace BookStoreManage.IRepository;
 
 public interface IAuthRepository{
-    void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt);
-    bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt );
+    Task<Account> CheckLogin(AuthDto account);
+    Task Register(AuthDto account);
+    string CreateToken(Account account);
+    RefreshToken GenerateRefreshToken();
+    Account SetRefreshToken(RefreshToken newRefreshToken, HttpResponse response);
 }   

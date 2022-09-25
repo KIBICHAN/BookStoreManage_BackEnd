@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookStoreManage.Entity
@@ -18,10 +19,10 @@ namespace BookStoreManage.Entity
         public double TotalPrice { get; set; }
 
 
-        [ForeignKey("BookID")]
-        public virtual Book? Book { get; set; }
+        public int BookID {get; set;}
+        public virtual Book Book { get; set; }
 
-        [ForeignKey("OrderID")]
-        public virtual Order? Order { get; set; }
+        public int OrderID {get; set;}
+        public virtual Order Order { get; set; }
     }
 }
