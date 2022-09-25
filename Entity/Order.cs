@@ -19,7 +19,7 @@ namespace BookStoreManage.Entity
         [Required(ErrorMessage = "Enter Date of order")]
         public DateTime DateOfOrder { get; set; }
 
-        [ForeignKey("AccountID")]
+        public int AccountID {get; set;}
         public virtual Account Account { get; set; }
 
 

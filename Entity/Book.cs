@@ -29,14 +29,13 @@ namespace BookStoreManage.Entity
         [Required(ErrorMessage = "Enter Date of published")]
         public DateTime DateOfPublished { get; set; }
 
-
-        [ForeignKey("FieldID")]
+        public int FieldID {get; set;}
         public virtual Field Field { get; set; }
 
-        [ForeignKey("PublisherID")]
+        public int PublisherID {get; set;}
         public virtual Publisher Publisher { get; set; }
 
-        [ForeignKey("AuthorID")]
+        public int AuthorID {get; set;}
         public virtual Author Author { get; set; }
 
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }

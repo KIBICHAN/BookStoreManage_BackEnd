@@ -41,6 +41,7 @@ public class AuthRepository : IAuthRepository{
         _account.PasswordHash = passwordHash;
         _account.PasswordSalt = passwordSalt;
         _account.Status = true;
+        _account.RoleID = 1;
 
         Console.WriteLine("Success!");
 

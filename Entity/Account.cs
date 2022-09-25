@@ -12,7 +12,7 @@ namespace BookStoreManage.Entity
 
         [MaxLength(100)]
         // [Required(ErrorMessage = "Enter Account Name")]
-        public string AccountName { get; set; }
+        public string Owner { get; set; }
 
         [MaxLength(100)]
         [Required(ErrorMessage = "Enter User Name")]
@@ -53,7 +53,7 @@ namespace BookStoreManage.Entity
 
         public bool Status { get; set; }
 
-        [ForeignKey("RoleID")]
+        public int RoleID {get; set;}
         public virtual Role Role { get; set; }
 
         public virtual ICollection<Order> Orders { get; set; }

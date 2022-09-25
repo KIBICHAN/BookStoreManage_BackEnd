@@ -19,10 +19,10 @@ namespace BookStoreManage.Entity
         public double TotalPrice { get; set; }
 
 
-        [ForeignKey("BookID")]
+        public int BookID {get; set;}
         public virtual Book Book { get; set; }
 
-        [ForeignKey("OrderID")]
+        public int OrderID {get; set;}
         public virtual Order Order { get; set; }
     }
 }
