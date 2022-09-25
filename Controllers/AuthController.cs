@@ -11,7 +11,7 @@ namespace BookStoreManage.Controllers
     // [Authorize]
     public class AuthController : ControllerBase
     {
-        private static Account account = new Account();
+        private static Account? account = new Account();
         private readonly IAuthRepository _authRepository;
         private readonly BookManageContext _context;
         public AuthController(IAuthRepository authRepository, BookManageContext context)
@@ -41,6 +41,12 @@ namespace BookStoreManage.Controllers
             account.TokenExpires = setToken.TokenExpires;
 
             return Ok(token);
+        }
+
+        [HttpPost("logout"), Authorize]
+        public ActionResult Logout(){
+            account = null;
+            return Ok();
         }
 
         [HttpPost("refresh-token")]

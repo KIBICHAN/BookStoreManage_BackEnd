@@ -20,13 +20,7 @@ public class AuthRepository : IAuthRepository{
         _configuration = configuration;
     }
 
-    public async Task<Account> Get(string username){
-        var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == username);
-        return _acc;
-    }
-
     public async Task<Account> CheckLogin(AuthDto account){
-        // var _acc = await Get(account.UserName);
         var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == account.UserName);
         if(account.UserName == _acc.UserName){
                 if(!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt)){
@@ -47,6 +41,8 @@ public class AuthRepository : IAuthRepository{
         _account.PasswordHash = passwordHash;
         _account.PasswordSalt = passwordSalt;
         _account.Status = true;
+
+        Console.WriteLine("Success!");
 
         _context.Accounts.Add(_account);
         await _context.SaveChangesAsync();
