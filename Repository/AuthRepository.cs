@@ -12,7 +12,7 @@ using System.IdentityModel.Tokens.Jwt;
 namespace BookStoreManage.Repository;
 
 public class AuthRepository : IAuthRepository{
-    private Account _account = new Account();
+    private Account _account;
     private readonly BookManageContext _context;
     private readonly IConfiguration _configuration;
     public AuthRepository(BookManageContext context, IConfiguration configuration){
@@ -42,8 +42,6 @@ public class AuthRepository : IAuthRepository{
         _account.PasswordSalt = passwordSalt;
         _account.Status = true;
         _account.RoleID = 1;
-
-        Console.WriteLine("Success!");
 
         _context.Accounts.Add(_account);
         await _context.SaveChangesAsync();
