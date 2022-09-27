@@ -53,6 +53,7 @@ builder.Services.AddDbContext<BookManageContext>(options =>
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
 builder.Services.AddScoped<IFieldRepository, FieldRepository>();
 
 var app = builder.Build();

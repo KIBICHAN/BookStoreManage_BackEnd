@@ -20,6 +20,11 @@ public class AccountRepository : IAccountRepository
         return accountList;
     }
 
+    public async Task<List<Account>> GetName(string name){
+        var nameList = await _context.Accounts.Where(a => a.Owner.Contains(name)).ToListAsync();
+        return nameList;
+    }
+
     public async Task<Account> FindByID(int id)
     {
         var account = await _context.Accounts.Include(a => a.Orders).FirstOrDefaultAsync(a => a.AccountID == id);

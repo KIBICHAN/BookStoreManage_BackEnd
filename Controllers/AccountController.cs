@@ -20,6 +20,12 @@ namespace BookStoreManage.Controllers;
             return Ok(list);
         }
 
+        [HttpGet("GetByName/{name}")]
+        public async Task<ActionResult<List<Account>>> GetName(string name){
+            var list = await _accountRepository.GetName(name);
+            return Ok(list);
+        }
+
         [HttpGet("GetById/{id}")]
         public async Task<ActionResult<Account>> GetId(int id){
             var account = await _accountRepository.FindByID(id);
@@ -38,7 +44,7 @@ namespace BookStoreManage.Controllers;
             return Ok();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> DeleteAccount(int id){
             await _accountRepository.DeleteAccount(id);
             return Ok();
