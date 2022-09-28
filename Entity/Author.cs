@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 
 namespace BookStoreManage.Entity
 {
@@ -11,6 +12,6 @@ namespace BookStoreManage.Entity
         [Required(ErrorMessage = "Enter Author Name")]
         public string AuthorName { get; set; }
 
-        public virtual ICollection<Book>? Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
     }
 }

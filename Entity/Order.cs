@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable disable
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookStoreManage.Entity
@@ -18,10 +19,10 @@ namespace BookStoreManage.Entity
         [Required(ErrorMessage = "Enter Date of order")]
         public DateTime DateOfOrder { get; set; }
 
-        [ForeignKey("AccountID")]
-        public virtual Account? Account { get; set; }
+        public int AccountID {get; set;}
+        public virtual Account Account { get; set; }
 
 
-        public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
