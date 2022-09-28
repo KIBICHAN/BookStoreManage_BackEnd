@@ -31,6 +31,12 @@ namespace BookStoreManage.Controllers;
             return Ok(publisher);
         }
 
+        [HttpPost("Create/{id}")]
+        public async Task<ActionResult> CreatNew(PublisherDto publisher){
+            await _publisherRepository.CreateNew(publisher);
+            return Ok(publisher);
+        }
+
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> EditPublisher(int id, PublisherDto publisher){
             await _publisherRepository.EditPublisher(id, publisher);
