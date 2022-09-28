@@ -8,6 +8,7 @@ namespace BookStoreManage.Entity
     public class Account
     {
         [Key]
+        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int AccountID { get; set; }
 
         [MaxLength(100)]
