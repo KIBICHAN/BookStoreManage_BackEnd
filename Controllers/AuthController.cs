@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BookStoreManage.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     // [Authorize]
     public class AuthController : ControllerBase
@@ -50,7 +50,7 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<string>> RefreshToken(){
+        public ActionResult<string> RefreshToken(){
             var refreshToken = Request.Cookies["refreshToken"];
             if(!account.RefreshToken.Equals(refreshToken)){
                 return Unauthorized("Invalid Refresh Token.");
