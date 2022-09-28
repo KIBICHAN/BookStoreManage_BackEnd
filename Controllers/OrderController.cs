@@ -25,7 +25,7 @@ namespace BookStoreManage.Controllers;
             return Ok(order);
         }
 
-        [HttpPost("Create/{id}")]
+        [HttpPost("Create")]
         public async Task<ActionResult> CreateNew(OrderDto order){
             await _orderRepository.CreateNewOrder(order);
             return Ok();

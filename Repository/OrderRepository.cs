@@ -17,13 +17,13 @@ public class OrderRepository : IOrderRepository{
 
     public async Task<List<Order>> GetAll()
     {
-        var orderList = await _context.Orders.ToListAsync();
+        var orderList = await _context.Orders.Include(o => o.OrderDetails).ToListAsync();
         return orderList;
     }
 
     public async Task<Order> FindByOrderID(int id)
     {
-        var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == id);
+        var order = await _context.Orders.Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.OrderID == id);
         return order;
     }
 
@@ -55,12 +55,14 @@ public class OrderRepository : IOrderRepository{
 
     public async Task CreateNewOrderDetail(OrderDetailDto _detail){
         detail = new OrderDetail();
+
+        var book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _detail.BookID);
         
         detail.OrderID = _detail.OrderID;
         detail.BookID = _detail.BookID;
         detail.Quantity = _detail.Quantity;
-        detail.Price = _detail.Price;
-        detail.TotalPrice = _detail.Quantity * _detail.Price;
+        detail.Price = book.Price;
+        detail.TotalPrice = _detail.Quantity * book.Price;
 
         _context.OrderDetails.Add(detail);
         await _context.SaveChangesAsync();
@@ -70,6 +72,7 @@ public class OrderRepository : IOrderRepository{
         var detail = await FindByOrderDetailID(id);
 
         detail.TotalPrice = quantity * detail.Price;
+        detail.Quantity = quantity;
 
         _context.OrderDetails.Update(detail);
         await _context.SaveChangesAsync();

@@ -31,7 +31,7 @@ namespace BookStoreManage.Controllers;
             return Ok(publisher);
         }
 
-        [HttpPost("Create/{id}")]
+        [HttpPost("Create")]
         public async Task<ActionResult> CreatNew(PublisherDto publisher){
             await _publisherRepository.CreateNew(publisher);
             return Ok(publisher);
