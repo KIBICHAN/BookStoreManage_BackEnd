@@ -60,7 +60,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Field>> getByName(string fieldName)
         {
-            var field = await _context.Fields.Where(f => f.FieldName == fieldName).ToListAsync();
+            var field = await _context.Fields.Where(f => f.FieldName.Contains(fieldName)).ToListAsync();
                 //ToListAsync();
             return field;
 
