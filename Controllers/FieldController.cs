@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreManage.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class FieldController : ControllerBase
     {
@@ -21,14 +21,14 @@ namespace BookStoreManage.Controllers
         }
 
         // GET: api/<FieldController>
-        [HttpGet]
+        [HttpGet("GetAll")]
         public IActionResult GetAlls()
         {
             return Ok(_context.Fields.ToList());
         }
 
         // GET api/<FieldController>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public IActionResult GetByID(int id)
         {
             var result = _repository.getByID(id);
@@ -38,9 +38,15 @@ namespace BookStoreManage.Controllers
             }
             return Ok(result.Result);
         }
+        [HttpGet("GetByName/{name}")]
+        public async Task<ActionResult<List<Publisher>>> GetName(string name)
+        {
+            var list = await _repository.getByName(name);
+            return Ok(list);
+        }
 
         // POST api/<FieldController>
-        [HttpPost]
+        [HttpPost("Create")]
         public IActionResult Post(string name, string description)
         {
             _repository.CreateField(name, description);
@@ -49,7 +55,7 @@ namespace BookStoreManage.Controllers
         }
 
         // PUT api/<FieldController>/5
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public IActionResult Put(int id, FieldDTO fields)
         {
             _repository.EditField(id, fields);
@@ -61,7 +67,7 @@ namespace BookStoreManage.Controllers
         }
 
         // DELETE api/<FieldController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public IActionResult Delete(int id)
         {
             _repository.DeleteField(id);
