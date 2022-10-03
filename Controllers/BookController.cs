@@ -21,14 +21,14 @@ namespace BookStoreManage.Controllers
         }
 
         // GET: api/<BookController>
-        [HttpGet]
+        [HttpGet("Get")]
         public IActionResult GetAlls()
         {
             return Ok(_context.Books.ToList());
         }
 
         // GET api/<BookController>/5
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public IActionResult GetByID(int id)
         {
             var result = _repository.getByID(id);
@@ -37,7 +37,7 @@ namespace BookStoreManage.Controllers
 
 
         // GET api/<BookController>/Truyện Conan
-        [HttpGet("{name}")]
+        [HttpGet("GetByName/{name}")]
         public IActionResult GetByName(string name)
         {
             var result = _repository.getByName(name);
@@ -58,7 +58,7 @@ namespace BookStoreManage.Controllers
         }
 
         // PUT api/<BookController>/5
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public IActionResult Put(int id, BookDTO bookDTO)
         {
             _repository.EditBook(id, bookDTO);
@@ -66,7 +66,7 @@ namespace BookStoreManage.Controllers
         }
 
         // DELETE api/<BookController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public IActionResult Delete(int id)
         {
             _repository.DeleteBook(id);
