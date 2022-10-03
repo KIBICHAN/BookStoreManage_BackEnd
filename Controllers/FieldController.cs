@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreManage.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class FieldController : ControllerBase
     {
@@ -32,18 +32,14 @@ namespace BookStoreManage.Controllers
         public IActionResult GetByID(int id)
         {
             var result = _repository.getByID(id);
-            if(id == null)
-            {
-                return NotFound();
-            }
             return Ok(result.Result);
         }
 
         // POST api/<FieldController>
         [HttpPost]
-        public IActionResult Post(string name, string description)
+        public IActionResult Post(FieldDTO field)
         {
-            _repository.CreateField(name, description);
+            _repository.CreateField(field);
             //return Ok(_repository.ShowLastOfList);
             return Ok(_context.Fields.ToList());
         }
@@ -53,10 +49,6 @@ namespace BookStoreManage.Controllers
         public IActionResult Put(int id, FieldDTO fields)
         {
             _repository.EditField(id, fields);
-            if(id == null)
-            {
-                return NotFound();
-            }
             return Ok();
         }
 
@@ -65,11 +57,6 @@ namespace BookStoreManage.Controllers
         public IActionResult Delete(int id)
         {
             _repository.DeleteField(id);
-            if(id == null)
-            {
-                return NotFound();
-            }
-
             return Ok(_repository);
         }
     }

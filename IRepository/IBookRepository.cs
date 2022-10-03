@@ -5,7 +5,7 @@ namespace BookStoreManage.IRepository
 {
     public interface IBookRepository
     {
-        void CreateBook(string bookName, double price, int quantity, string image, string description, DateTime DateOfPublished, int fieldID, int publisherID, int authorID);
+        void CreateBook(BookDTO book);
 
         void EditBook(int bookID, BookDTO books);
 

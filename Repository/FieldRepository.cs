@@ -1,4 +1,5 @@
-﻿using BookStoreManage.DTO;
+﻿#nullable disable
+using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,11 @@ namespace BookStoreManage.Repository
         {
             _context = context;
         }
-        public void CreateField(string fieldName, string fieldDescription)
+        public void CreateField(FieldDTO _field)
         {
             field = new Field();
-            field.FieldName = fieldName;
-            field.FieldDescription = fieldDescription;
+            field.FieldName = _field.Name;
+            field.FieldDescription = _field.description;
             _context.Add(field);
             _context.SaveChanges();
         }
