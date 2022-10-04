@@ -1,4 +1,5 @@
-﻿using BookStoreManage.DTO;
+﻿#nullable disable
+using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;

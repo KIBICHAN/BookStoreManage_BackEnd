@@ -48,7 +48,7 @@ namespace BookStoreManage.Controllers
         {
             await _repository.CreateBook(bookDTO);
             //return Ok(_repository.ShowLastOfList);
-            return Ok(_context.Fields.ToList());
+            return Ok(_context.Books.ToList());
         }
 
         [HttpPut("Update/{id}")]

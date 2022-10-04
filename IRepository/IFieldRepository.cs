@@ -5,7 +5,7 @@ namespace BookStoreManage.IRepository
 {
     public interface IFieldRepository
     {
-        void CreateField(string fieldName, string fieldDescription);
+        void CreateField(FieldDTO field);
 
         void EditField(int fieldID, FieldDTO field);
 
