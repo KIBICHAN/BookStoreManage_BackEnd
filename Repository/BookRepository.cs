@@ -1,4 +1,5 @@
-﻿using BookStoreManage.DTO;
+﻿#nullable disable
+using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -15,22 +16,21 @@ namespace BookStoreManage.Repository
             _context = context;
         }
 
-        public void CreateBook(string bookName, double price, int quantity, string image, string description, DateTime dateOfPublished, int fieldID, int publisherID, int authorID)
+        public void CreateBook(BookDTO _book)
         {
             book = new Book();
-            book.BookName = bookName;
-            book.Price = price;
-            book.Quantity = quantity;
-            book.Image = image;
-            book.Description = description;
-            book.DateOfPublished = dateOfPublished;
-            book.FieldID = fieldID;
-            book.PublisherID = publisherID;
-            book.AuthorID = authorID;
+            book.BookName = _book.bookName;
+            book.Price = _book.price;
+            book.Quantity = _book.quantity;
+            book.Image = _book.image;
+            book.Description = _book.description;
+            book.DateOfPublished = _book.DateOfPublished;
+            book.FieldID = _book.fieldID;
+            book.PublisherID = _book.publisherID;
+            book.AuthorID = _book.authorID;
 
             _context.Books.Add(book);
             _context.SaveChanges();
-
         }
 
         public void DeleteBook(int BookID)

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreManage.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -32,10 +32,6 @@ namespace BookStoreManage.Controllers
         public IActionResult GetByID(int id)
         {
             var result = _repository.getByID(id);
-            if (id == null)
-            {
-                return NotFound();
-            }
             return Ok(result.Result);
         }
 
@@ -53,12 +49,12 @@ namespace BookStoreManage.Controllers
         }
 
         // POST api/<BookController>
-        [HttpPost("Create")]
-        public IActionResult Post(string bookName, double price, int quantity, string image, string description, DateTime DateOfPublished, int fieldID, int publisherID, int authorID)
+        [HttpPost]
+        public IActionResult Post(BookDTO book)
         {
-            _repository.CreateBook(bookName, price, quantity, image, description, DateOfPublished, fieldID, publisherID, authorID);
+            _repository.CreateBook(book);
             //return Ok(_repository.ShowLastOfList);
-            return Ok(_context.Fields.ToList());
+            return Ok(_context.Books.ToList());
         }
 
         // PUT api/<BookController>/5
@@ -66,10 +62,6 @@ namespace BookStoreManage.Controllers
         public IActionResult Put(int id, BookDTO bookDTO)
         {
             _repository.EditBook(id, bookDTO);
-            if (id == null)
-            {
-                return NotFound();
-            }
             return Ok();
         }
 
@@ -78,11 +70,6 @@ namespace BookStoreManage.Controllers
         public IActionResult Delete(int id)
         {
             _repository.DeleteBook(id);
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             return Ok(_repository);
         }
     }

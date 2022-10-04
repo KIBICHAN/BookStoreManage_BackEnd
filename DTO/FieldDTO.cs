@@ -1,4 +1,5 @@
-﻿namespace BookStoreManage.DTO
+﻿#nullable disable
+namespace BookStoreManage.DTO
 {
     public class FieldDTO
     {
