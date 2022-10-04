@@ -15,35 +15,36 @@ namespace BookStoreManage.Repository
             _context = context;
         }
 
-        public void CreateBook(string bookName, double price, int quantity, string image, string description, DateTime dateOfPublished, int fieldID, int publisherID, int authorID)
+        public async Task CreateBook(BookDTO bookDTO)
         {
             book = new Book();
-            book.BookName = bookName;
-            book.Price = price;
-            book.Quantity = quantity;
-            book.Image = image;
-            book.Description = description;
-            book.DateOfPublished = dateOfPublished;
-            book.FieldID = fieldID;
-            book.PublisherID = publisherID;
-            book.AuthorID = authorID;
+            book.BookName = bookDTO.bookName;
+            book.Price = bookDTO.price;
+            book.Quantity = bookDTO.quantity;
+            book.Image = bookDTO.image;
+            book.Description = bookDTO.description;
+            book.DateOfPublished = bookDTO.DateOfPublished;
+            book.FieldID = bookDTO.fieldID;
+            book.PublisherID = bookDTO.publisherID;
+            book.AuthorID = bookDTO.authorID;
 
             _context.Books.Add(book);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+
 
         }
 
-        public void DeleteBook(int BookID)
+        public async Task DeleteBook(int BookID)
         {
             var tmp = _context.Books.Find(BookID);
             if(tmp != null)
             {
                 _context.Books.Remove(tmp);
-                _context.SaveChanges(); 
+                await _context.SaveChangesAsync(); 
             }    
         }
 
-        public void EditBook(int bookID, BookDTO bookDTO)
+        public async Task EditBook(int bookID, BookDTO bookDTO)
         {
             var tmp = _context.Books.Find(bookID);
             if( tmp != null)
@@ -59,19 +60,25 @@ namespace BookStoreManage.Repository
                 tmp.AuthorID = bookDTO.authorID;
 
                 _context.Update(tmp);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
         }
 
         public async Task<List<Book>> getAllBook()
         {
-            var book = await _context.Books.ToListAsync();
+            var book = await _context.Books.Include(b => b.Author)
+                                           .Include(b => b.Publisher)
+                                           .Include(b => b.Field)
+                                           .ToListAsync();
             return book;
         }
 
         public async Task<Book> getByID(int idBook)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == idBook);
+            var book = await _context.Books.Include(b => b.Author)
+                                           .Include(b => b.Publisher)
+                                           .Include(b => b.Field)
+                                           .FirstOrDefaultAsync(b => b.BookID == idBook);
             return book;
         }
 

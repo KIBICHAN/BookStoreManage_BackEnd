@@ -5,11 +5,11 @@ namespace BookStoreManage.IRepository
 {
     public interface IBookRepository
     {
-        void CreateBook(string bookName, double price, int quantity, string image, string description, DateTime DateOfPublished, int fieldID, int publisherID, int authorID);
+        Task CreateBook(BookDTO bookDTO);
 
-        void EditBook(int bookID, BookDTO books);
+        Task EditBook(int bookID, BookDTO books);
 
-        void DeleteBook(int bookID);
+        Task DeleteBook(int bookID);
 
         Task<List<Book>> getAllBook();
 

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreManage.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -20,69 +20,48 @@ namespace BookStoreManage.Controllers
             _repository = repository;
         }
 
-        // GET: api/<BookController>
         [HttpGet("Get")]
-        public IActionResult GetAlls()
+        public async Task<ActionResult<List<Book>>> GetAlls()
         {
-            return Ok(_context.Books.ToList());
+            var list = await _repository.getAllBook();
+            return Ok(list);
         }
 
-        // GET api/<BookController>/5
         [HttpGet("GetById/{id}")]
-        public IActionResult GetByID(int id)
+        public async Task<ActionResult<Book>> GetByID(int id)
         {
-            var result = _repository.getByID(id);
-            if (id == null)
-            {
-                return NotFound();
-            }
-            return Ok(result.Result);
+            var result = await _repository.getByID(id);
+            return Ok(result);
         }
 
 
-        // GET api/<BookController>/Truyện Conan
         [HttpGet("GetByName/{name}")]
-        public IActionResult GetByName(string name)
+        public async Task<ActionResult<List<Book>>> GetByName(string name)
         {
-            var result = _repository.getByName(name);
-            if (name != null)
-            {
-                return Ok(result.Result);
-            }
-            return NotFound();
+            var result = await _repository.getByName(name);
+            return Ok(result);
         }
 
-        // POST api/<BookController>
+ 
         [HttpPost("Create")]
-        public IActionResult Post(string bookName, double price, int quantity, string image, string description, DateTime DateOfPublished, int fieldID, int publisherID, int authorID)
+        public async Task<ActionResult> Post(BookDTO bookDTO)
         {
-            _repository.CreateBook(bookName, price, quantity, image, description, DateOfPublished, fieldID, publisherID, authorID);
+            await _repository.CreateBook(bookDTO);
             //return Ok(_repository.ShowLastOfList);
             return Ok(_context.Fields.ToList());
         }
 
-        // PUT api/<BookController>/5
         [HttpPut("Update/{id}")]
-        public IActionResult Put(int id, BookDTO bookDTO)
+        public async Task<ActionResult> Put(int id, BookDTO bookDTO)
         {
-            _repository.EditBook(id, bookDTO);
-            if (id == null)
-            {
-                return NotFound();
-            }
+            await _repository.EditBook(id, bookDTO);
             return Ok();
         }
 
-        // DELETE api/<BookController>/5
         [HttpDelete("Delete/{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            _repository.DeleteBook(id);
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            await _repository.DeleteBook(id);
             return Ok(_repository);
         }
     }
