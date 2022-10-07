@@ -3,6 +3,7 @@ using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 namespace BookStoreManage.Repository
 {
@@ -38,17 +39,17 @@ namespace BookStoreManage.Repository
         public async Task DeleteBook(int BookID)
         {
             var tmp = _context.Books.Find(BookID);
-            if(tmp != null)
+            if (tmp != null)
             {
                 _context.Books.Remove(tmp);
-                await _context.SaveChangesAsync(); 
-            }    
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task EditBook(int bookID, BookDTO bookDTO)
         {
             var tmp = _context.Books.Find(bookID);
-            if( tmp != null)
+            if (tmp != null)
             {
                 tmp.BookName = bookDTO.bookName;
                 tmp.Price = bookDTO.price;
@@ -67,19 +68,13 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getAllBook()
         {
-            var book = await _context.Books.Include(b => b.Author)
-                                           .Include(b => b.Publisher)
-                                           .Include(b => b.Field)
-                                           .ToListAsync();
+            var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Field).ToListAsync();
             return book;
         }
 
         public async Task<Book> getByID(int idBook)
         {
-            var book = await _context.Books.Include(b => b.Author)
-                                           .Include(b => b.Publisher)
-                                           .Include(b => b.Field)
-                                           .FirstOrDefaultAsync(b => b.BookID == idBook);
+            var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Field).FirstOrDefaultAsync(b => b.BookID == idBook);
             return book;
         }
 
@@ -88,6 +83,45 @@ namespace BookStoreManage.Repository
             var field = await _context.Books.Where(b => b.BookName.Contains(bookName)).ToListAsync();
             //ToListAsync();
             return field;
+        }
+
+        public async Task<List<BookDTO>> ImportExcel(IFormFile file)
+        {
+            try
+            {
+                var list = new List<BookDTO>();
+                using (var stream = new MemoryStream())
+                {
+                    await file.CopyToAsync(stream);
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                    using (var package = new ExcelPackage(stream))
+                    {
+                        ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
+                        var rowcount = worksheet.Dimension.Rows;
+                        for (int row = 2; row <= rowcount; row++)
+                        {
+                            list.Add(new BookDTO
+                            {
+                                bookName = worksheet.Cells[row, 1].Value.ToString(),
+                                price = double.Parse(worksheet.Cells[row, 2].Value.ToString()),
+                                quantity = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
+                                image = worksheet.Cells[row, 4].Value.ToString(),
+                                description = worksheet.Cells[row, 5].Value.ToString(),
+                                fieldID = Int32.Parse(worksheet.Cells[row, 6].Value.ToString()),
+                                publisherID = Int32.Parse(worksheet.Cells[row, 7].Value.ToString()),
+                                authorID = Int32.Parse(worksheet.Cells[row, 8].Value.ToString()),
+                                DateOfPublished = DateTime.Parse(worksheet.Cells[row, 9].Value.ToString())
+                            });
+                        }
+                    }
+                }
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Fail!", e.Message);
+            }
+            return null;
         }
     }
 }
