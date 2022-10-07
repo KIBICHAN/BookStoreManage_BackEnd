@@ -26,7 +26,7 @@ namespace BookStoreManage.Controllers;
         }
 
         [HttpPut("UpdateTotal/{id}")] 
-        public async Task<ActionResult> UpdateSubTotal(int id, double quantity){
+        public async Task<ActionResult> UpdateSubTotal(int id, int quantity){
             await _orderRepository.UpdateTotalPrice(id, quantity);
             return Ok();
         }

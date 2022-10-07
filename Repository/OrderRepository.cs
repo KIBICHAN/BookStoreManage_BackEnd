@@ -67,6 +67,7 @@ public class OrderRepository : IOrderRepository
             order.OrderStatus = _order.OrderStatus;
             order.DateOfOrder = DateTime.Today;
             order.AccountID = _order.AccountID;
+            order.TotalAmount = 0;
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
@@ -77,7 +78,7 @@ public class OrderRepository : IOrderRepository
         }
     }
 
-    public async Task UpdateStatus(int id, double status)
+    public async Task UpdateStatus(int id, int status)
     {
         try
         {
@@ -94,21 +95,25 @@ public class OrderRepository : IOrderRepository
         }
     }
 
-    public async Task CreateNewOrderDetail(OrderDetailDto _detail)
+    public async Task CreateNewOrderDetail(OrderDetailDto _orderDetail)
     {
         try
         {
             detail = new OrderDetail();
 
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _detail.BookID);
+            var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _orderDetail.BookID);
 
-            detail.OrderID = _detail.OrderID;
-            detail.BookID = _detail.BookID;
-            detail.Quantity = _detail.Quantity;
-            detail.Price = book.Price;
-            detail.TotalPrice = _detail.Quantity * book.Price;
+            detail.OrderID = _orderDetail.OrderID;
+            detail.BookID = _orderDetail.BookID;
+            detail.Quantity = _orderDetail.Quantity;
+            detail.Price = _book.Price;
+            detail.TotalPrice = _orderDetail.Quantity * _book.Price;
+
+            _book.Quantity = _book.Quantity - _orderDetail.Quantity;
 
             _context.OrderDetails.Add(detail);
+            _context.Books.Update(_book);
+            
             await _context.SaveChangesAsync();
         }
         catch (Exception e)
@@ -117,7 +122,7 @@ public class OrderRepository : IOrderRepository
         }
     }
 
-    public async Task UpdateTotalPrice(int id, double quantity)
+    public async Task UpdateTotalPrice(int id, int quantity)
     {
         try
         {

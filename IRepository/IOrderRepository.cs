@@ -8,8 +8,8 @@ public interface IOrderRepository {
     Task<Order> FindByOrderID(int id);
     Task<OrderDetail> FindByOrderDetailID(int id);
     Task CreateNewOrder(OrderDto _order);
-    Task UpdateStatus(int id, double status);
+    Task UpdateStatus(int id, int status);
     Task CreateNewOrderDetail(OrderDetailDto _detail);
-    Task UpdateTotalPrice(int id, double quantity);
+    Task UpdateTotalPrice(int id, int quantity);
     Task DeleteOrderDetail(int id);
 }

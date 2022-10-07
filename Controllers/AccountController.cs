@@ -25,9 +25,12 @@ public class AccountController : ControllerBase
 
         for (int i = 0; i < list.Count; i++)
         {
-            list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
-            list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
-            list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            if (list[i].AccountAddress != null && list[i].Phone != null && list[i].AccountAddress != null)
+            {
+                list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
+                list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
+                list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            }
         }
 
         return Ok(list);
@@ -40,9 +43,12 @@ public class AccountController : ControllerBase
 
         for (int i = 0; i < list.Count; i++)
         {
-            list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
-            list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
-            list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            if (list[i].AccountAddress != null && list[i].Phone != null && list[i].AccountAddress != null)
+            {
+                list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
+                list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
+                list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            }
         }
 
         return Ok(list);
@@ -53,7 +59,7 @@ public class AccountController : ControllerBase
     {
         var account = await _accountRepository.FindByID(id);
 
-        account.AccountEmail = _accountRepository.Base64Decode(account.AccountEmail);
+        //account.AccountEmail = _accountRepository.Base64Decode(account.AccountEmail);
 
         return Ok(account);
     }

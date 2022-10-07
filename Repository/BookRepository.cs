@@ -80,9 +80,9 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getByName(string bookName)
         {
-            var field = await _context.Books.Where(b => b.BookName.Contains(bookName)).ToListAsync();
+            var books = await _context.Books.Where(b => b.BookName.Contains(bookName)).ToListAsync();
             //ToListAsync();
-            return field;
+            return books;
         }
 
         public async Task<List<BookDTO>> ImportExcel(IFormFile file)
@@ -100,6 +100,13 @@ namespace BookStoreManage.Repository
                         var rowcount = worksheet.Dimension.Rows;
                         for (int row = 2; row <= rowcount; row++)
                         {
+                            string fieldName = worksheet.Cells[row, 6].Value.ToString();
+                            int fieldId = _context.Fields.Where(f => f.FieldName.Trim().Contains(fieldName.Trim())).Select(f => f.FieldID).FirstOrDefault();
+                            string authorName = worksheet.Cells[row, 7].Value.ToString();
+                            int authorId = _context.Authors.Where(a => a.AuthorName.Trim().Contains(authorName.Trim())).Select(a => a.AuthorID).FirstOrDefault();
+                            string publisherName = worksheet.Cells[row, 8].Value.ToString();
+                            int publisherId = _context.Publishers.Where(p => p.PublisherName.Trim().Contains(publisherName.Trim())).Select(p => p.PublisherID).FirstOrDefault();
+
                             list.Add(new BookDTO
                             {
                                 bookName = worksheet.Cells[row, 1].Value.ToString(),
@@ -107,9 +114,9 @@ namespace BookStoreManage.Repository
                                 quantity = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
                                 image = worksheet.Cells[row, 4].Value.ToString(),
                                 description = worksheet.Cells[row, 5].Value.ToString(),
-                                fieldID = Int32.Parse(worksheet.Cells[row, 6].Value.ToString()),
-                                publisherID = Int32.Parse(worksheet.Cells[row, 7].Value.ToString()),
-                                authorID = Int32.Parse(worksheet.Cells[row, 8].Value.ToString()),
+                                fieldID = fieldId,
+                                publisherID = publisherId,
+                                authorID = authorId,
                                 DateOfPublished = DateTime.Parse(worksheet.Cells[row, 9].Value.ToString())
                             });
                         }

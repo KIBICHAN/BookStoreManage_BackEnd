@@ -32,7 +32,7 @@ namespace BookStoreManage.Controllers;
         }
 
         [HttpPut("UpdateStatus/{id}")]
-        public async Task<ActionResult> UpdateStatus(int id, double status){
+        public async Task<ActionResult> UpdateStatus(int id, int status){
             await _orderRepository.UpdateStatus(id, status);
             return Ok();
         }
