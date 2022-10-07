@@ -21,12 +21,10 @@ namespace BookStoreManage.Entity
         [Required(ErrorMessage = "Enter Quantity")]
         public int Quantity { get; set; }
 
-        [Required(ErrorMessage = "Enter Image")]
         public string Image { get; set; }
 
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Enter Date of published")]
         public DateTime DateOfPublished { get; set; }
 
         public int FieldID {get; set;}
