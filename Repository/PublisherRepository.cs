@@ -17,93 +17,59 @@ public class PublisherRepository : IPublisherRepository
 
     public async Task<List<Publisher>> GetAll()
     {
-        try
-        {
-            var list = await _context.Publishers.ToListAsync();
-            return list;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
-        return null;
+
+        var list = await _context.Publishers.ToListAsync();
+        return list;
+
     }
 
     public async Task<List<Publisher>> GetName(string name)
     {
-        try
-        {
-            var list = await _context.Publishers.Where(p => p.PublisherName.Contains(name)).ToListAsync();
-            return list;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
-        return null;
+
+        var list = await _context.Publishers.Where(p => p.PublisherName.Contains(name)).ToListAsync();
+        return list;
+
     }
 
     public async Task<Publisher> FindByID(int id)
     {
-        try
-        {
-            var publisher = await _context.Publishers.FirstOrDefaultAsync(p => p.PublisherID == id);
-            return publisher;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
-        return null;
+
+        var publisher = await _context.Publishers.FirstOrDefaultAsync(p => p.PublisherID == id);
+        return publisher;
+
     }
 
     public async Task CreateNew(PublisherDto _publisher)
     {
-        try
-        {
-            publisher = new Publisher();
 
-            publisher.PublisherName = _publisher.PublisherName;
-            publisher.FieldAddress = _publisher.FieldAddress;
+        publisher = new Publisher();
 
-            _context.Publishers.Add(publisher);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        publisher.PublisherName = _publisher.PublisherName;
+        publisher.FieldAddress = _publisher.FieldAddress;
+
+        _context.Publishers.Add(publisher);
+        await _context.SaveChangesAsync();
+
     }
 
     public async Task EditPublisher(int id, PublisherDto _publisher)
     {
-        try
-        {
-            var publisher = await _context.Publishers.FirstOrDefaultAsync(p => p.PublisherID == id);
 
-            publisher.PublisherName = _publisher.PublisherName;
-            publisher.FieldAddress = _publisher.FieldAddress;
+        var publisher = await _context.Publishers.FirstOrDefaultAsync(p => p.PublisherID == id);
 
-            _context.Publishers.Update(publisher);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        publisher.PublisherName = _publisher.PublisherName;
+        publisher.FieldAddress = _publisher.FieldAddress;
+
+        _context.Publishers.Update(publisher);
+        await _context.SaveChangesAsync();
+
     }
 
     public async Task DeletePublisher(int id)
     {
-        try
-        {
-            var publisher = _context.Publishers.FirstOrDefault(p => p.PublisherID == id);
-            _context.Remove(publisher);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+
+        var publisher = _context.Publishers.FirstOrDefault(p => p.PublisherID == id);
+        _context.Remove(publisher);
+        await _context.SaveChangesAsync();
     }
 }

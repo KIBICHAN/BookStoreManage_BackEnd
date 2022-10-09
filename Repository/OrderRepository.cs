@@ -18,139 +18,89 @@ public class OrderRepository : IOrderRepository
 
     public async Task<List<Order>> GetAll()
     {
-        try
-        {
-            var orderList = await _context.Orders.Include(o => o.OrderDetails).ToListAsync();
-            return orderList;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
-        return null;
+        var orderList = await _context.Orders.Include(o => o.OrderDetails).ToListAsync();
+        return orderList;
     }
 
     public async Task<Order> FindByOrderID(int id)
     {
-        try
-        {
-            var order = await _context.Orders.Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.OrderID == id);
-            return order;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
-        return null;
+        var order = await _context.Orders.Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.OrderID == id);
+        return order;
     }
 
     public async Task<OrderDetail> FindByOrderDetailID(int id)
     {
-        try
-        {
-            var detail = await _context.OrderDetails.FirstOrDefaultAsync(o => o.OrderDetailID == id);
-            return detail;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
-        return null;
+        var detail = await _context.OrderDetails.FirstOrDefaultAsync(o => o.OrderDetailID == id);
+        return detail;
     }
 
     public async Task CreateNewOrder(OrderDto _order)
     {
-        try
-        {
-            order = new Order();
+        order = new Order();
 
-            order.OrderStatus = _order.OrderStatus;
-            order.DateOfOrder = DateTime.Today;
-            order.AccountID = _order.AccountID;
-            order.TotalAmount = 0;
+        order.OrderStatus = _order.OrderStatus;
+        order.DateOfOrder = DateTime.Today;
+        order.AccountID = _order.AccountID;
+        order.TotalAmount = 0;
 
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateStatus(int id, int status)
     {
-        try
-        {
-            var order = await FindByOrderID(id);
+        var order = await FindByOrderID(id);
 
-            order.OrderStatus = status;
+        order.OrderStatus = status;
 
-            _context.Orders.Update(order);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        _context.Orders.Update(order);
+        await _context.SaveChangesAsync();
     }
 
-    public async Task CreateNewOrderDetail(OrderDetailDto _orderDetail)
+    public async Task CreateNewOrderDetail(List<OrderDetailDto> _list, int orederId)
     {
-        try
+        double total = 0;
+        var _order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == orederId);
+
+        for (int i = 0; i < _list.Count; i++)
         {
             detail = new OrderDetail();
+            var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _list[i].BookID);
 
-            var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _orderDetail.BookID);
-
-            detail.OrderID = _orderDetail.OrderID;
-            detail.BookID = _orderDetail.BookID;
-            detail.Quantity = _orderDetail.Quantity;
+            detail.OrderID = orederId;
+            detail.BookID = _list[i].BookID;
+            detail.Quantity = _list[i].Quantity;
             detail.Price = _book.Price;
-            detail.TotalPrice = _orderDetail.Quantity * _book.Price;
+            detail.TotalPrice = _list[i].Quantity * _book.Price;
 
-            _book.Quantity = _book.Quantity - _orderDetail.Quantity;
+            _book.Quantity = _book.Quantity - _list[i].Quantity;
+
+            total = total + detail.TotalPrice;
 
             _context.OrderDetails.Add(detail);
             _context.Books.Update(_book);
-            
-            await _context.SaveChangesAsync();
         }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+
+        _order.TotalAmount = total;
+        _context.Orders.Update(_order);
+        await _context.SaveChangesAsync();
     }
 
     public async Task UpdateTotalPrice(int id, int quantity)
     {
-        try
-        {
-            var detail = await FindByOrderDetailID(id);
+        var detail = await FindByOrderDetailID(id);
 
-            detail.TotalPrice = quantity * detail.Price;
-            detail.Quantity = quantity;
+        detail.TotalPrice = quantity * detail.Price;
+        detail.Quantity = quantity;
 
-            _context.OrderDetails.Update(detail);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        _context.OrderDetails.Update(detail);
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteOrderDetail(int id)
     {
-        try
-        {
-            var detail = await FindByOrderDetailID(id);
-            _context.Remove(detail);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        var detail = await FindByOrderDetailID(id);
+        _context.Remove(detail);
+        await _context.SaveChangesAsync();
     }
 }

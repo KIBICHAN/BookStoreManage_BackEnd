@@ -2,6 +2,7 @@
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -43,7 +44,7 @@ namespace BookStoreManage.Controllers
             return Ok(result);
         }
 
- 
+
         [HttpPost("Create")]
         public async Task<ActionResult> CreateNewBook(BookDTO bookDTO)
         {
@@ -67,10 +68,14 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpPost("Import")]
-        public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file){
+        public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file)
+        {
             var list = await _repository.ImportExcel(file);
-            for(int i = 0; i < list.Count; i++){
-                await _repository.CreateBook(list[i]);
+            for (int i = 0; i < list.Count; i++)
+            {
+                
+                    await _repository.CreateBook(list[i]);
+                
             }
             return Ok(_context.Books.ToList());
         }

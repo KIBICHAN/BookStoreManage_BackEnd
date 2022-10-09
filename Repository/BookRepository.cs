@@ -1,7 +1,9 @@
 ﻿#nullable disable
+using System.Net;
 using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 
@@ -32,8 +34,6 @@ namespace BookStoreManage.Repository
 
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
-
-
         }
 
         public async Task DeleteBook(int BookID)
@@ -123,12 +123,9 @@ namespace BookStoreManage.Repository
                     }
                 }
                 return list;
+            }catch(Exception ex){
+                throw new BadHttpRequestException(ex.Message);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("Fail!", e.Message);
-            }
-            return null;
         }
     }
 }

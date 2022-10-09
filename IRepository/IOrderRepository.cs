@@ -9,7 +9,7 @@ public interface IOrderRepository {
     Task<OrderDetail> FindByOrderDetailID(int id);
     Task CreateNewOrder(OrderDto _order);
     Task UpdateStatus(int id, int status);
-    Task CreateNewOrderDetail(OrderDetailDto _detail);
+    Task CreateNewOrderDetail(List<OrderDetailDto> _list, int orederId);
     Task UpdateTotalPrice(int id, int quantity);
     Task DeleteOrderDetail(int id);
 }
