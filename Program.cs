@@ -52,6 +52,11 @@ builder.Services.AddDbContext<BookManageContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
+builder.Services.AddCors(p => p.AddPolicy("MyCors", build => {
+    // build.WithOrigins("https://localhost:7091");
+    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
@@ -73,6 +78,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("MyCors");
 
 app.UseAuthentication();
 
