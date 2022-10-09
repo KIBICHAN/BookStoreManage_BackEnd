@@ -49,7 +49,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Field>> getAllField()
         {
-            var field = await _context.Fields.ToListAsync();
+            var field = await _context.Fields.Include(b => b.Books).ToListAsync();
             return field;
         }
 
