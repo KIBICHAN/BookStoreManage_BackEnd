@@ -13,7 +13,7 @@ namespace BookStoreManage.Entity
         public double Price { get; set; }
 
         [Required(ErrorMessage = "Enter Total Quantity")]
-        public double Quantity { get; set; }
+        public int Quantity { get; set; }
 
         [Required(ErrorMessage = "Enter Total Price")]
         public double TotalPrice { get; set; }

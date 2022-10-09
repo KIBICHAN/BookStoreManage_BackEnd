@@ -38,10 +38,6 @@ namespace BookStoreManage.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("AccountName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("Country")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -49,20 +45,38 @@ namespace BookStoreManage.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<string>("Owner")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("varbinary(1024)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasMaxLength(1024)
+                        .HasColumnType("varbinary(1024)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
 
-                    b.Property<int?>("RoleID")
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleID")
                         .HasColumnType("int");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("TokenCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("TokenExpires")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -102,7 +116,7 @@ namespace BookStoreManage.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookID"), 1L, 1);
 
-                    b.Property<int?>("AuthorID")
+                    b.Property<int>("AuthorID")
                         .HasColumnType("int");
 
                     b.Property<string>("BookName")
@@ -114,20 +128,18 @@ namespace BookStoreManage.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FieldID")
+                    b.Property<int>("FieldID")
                         .HasColumnType("int");
 
                     b.Property<string>("Image")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
-                    b.Property<int?>("PublisherID")
+                    b.Property<int>("PublisherID")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -153,7 +165,6 @@ namespace BookStoreManage.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FieldID"), 1L, 1);
 
                     b.Property<string>("FieldDescription")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FieldName")
@@ -174,7 +185,7 @@ namespace BookStoreManage.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"), 1L, 1);
 
-                    b.Property<int?>("AccountID")
+                    b.Property<int>("AccountID")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateOfOrder")
@@ -202,10 +213,10 @@ namespace BookStoreManage.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailID"), 1L, 1);
 
-                    b.Property<int?>("BookID")
+                    b.Property<int>("BookID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderID")
+                    b.Property<int>("OrderID")
                         .HasColumnType("int");
 
                     b.Property<double>("Price")
@@ -235,7 +246,6 @@ namespace BookStoreManage.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PublisherID"), 1L, 1);
 
                     b.Property<string>("FieldAddress")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -288,7 +298,9 @@ namespace BookStoreManage.Migrations
                 {
                     b.HasOne("BookStoreManage.Entity.Role", "Role")
                         .WithMany("Accounts")
-                        .HasForeignKey("RoleID");
+                        .HasForeignKey("RoleID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Role");
                 });
@@ -297,15 +309,21 @@ namespace BookStoreManage.Migrations
                 {
                     b.HasOne("BookStoreManage.Entity.Author", "Author")
                         .WithMany("Books")
-                        .HasForeignKey("AuthorID");
+                        .HasForeignKey("AuthorID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BookStoreManage.Entity.Field", "Field")
                         .WithMany("Books")
-                        .HasForeignKey("FieldID");
+                        .HasForeignKey("FieldID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BookStoreManage.Entity.Publisher", "Publisher")
                         .WithMany("Books")
-                        .HasForeignKey("PublisherID");
+                        .HasForeignKey("PublisherID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Author");
 
@@ -318,7 +336,9 @@ namespace BookStoreManage.Migrations
                 {
                     b.HasOne("BookStoreManage.Entity.Account", "Account")
                         .WithMany("Orders")
-                        .HasForeignKey("AccountID");
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
                 });
@@ -327,11 +347,15 @@ namespace BookStoreManage.Migrations
                 {
                     b.HasOne("BookStoreManage.Entity.Book", "Book")
                         .WithMany("OrderDetails")
-                        .HasForeignKey("BookID");
+                        .HasForeignKey("BookID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("BookStoreManage.Entity.Order", "Order")
                         .WithMany("OrderDetails")
-                        .HasForeignKey("OrderID");
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Book");
 

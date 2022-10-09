@@ -2,6 +2,8 @@
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,9 +44,9 @@ namespace BookStoreManage.Controllers
             return Ok(result);
         }
 
- 
+
         [HttpPost("Create")]
-        public async Task<ActionResult> Post(BookDTO bookDTO)
+        public async Task<ActionResult> CreateNewBook(BookDTO bookDTO)
         {
             await _repository.CreateBook(bookDTO);
             //return Ok(_repository.ShowLastOfList);
@@ -52,17 +54,30 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        public async Task<ActionResult> Put(int id, BookDTO bookDTO)
+        public async Task<ActionResult> UpdateBook(int id, BookDTO bookDTO)
         {
             await _repository.EditBook(id, bookDTO);
             return Ok();
         }
 
         [HttpDelete("Delete/{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteBook(int id)
         {
             await _repository.DeleteBook(id);
             return Ok(_repository);
+        }
+
+        [HttpPost("Import")]
+        public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file)
+        {
+            var list = await _repository.ImportExcel(file);
+            for (int i = 0; i < list.Count; i++)
+            {
+                
+                    await _repository.CreateBook(list[i]);
+                
+            }
+            return Ok(_context.Books.ToList());
         }
     }
 }

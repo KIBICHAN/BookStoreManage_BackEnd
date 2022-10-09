@@ -18,7 +18,6 @@ public class AccountRepository : IAccountRepository
     public async Task<List<Account>> GetAll()
     {
         var accountList = await _context.Accounts.Include(a => a.Orders).ToListAsync();
-
         return accountList;
     }
 
@@ -31,7 +30,6 @@ public class AccountRepository : IAccountRepository
     public async Task<Account> FindByID(int id)
     {
         var account = await _context.Accounts.Include(a => a.Orders).FirstOrDefaultAsync(a => a.AccountID == id);
-
         return account;
     }
 
@@ -40,8 +38,8 @@ public class AccountRepository : IAccountRepository
         var acc = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountID == id);
 
         string email = Base64Encode(_account.AccountEmail);
-        string phone = Base64Decode(_account.Phone);
-        string address = Base64Decode(_account.AccountAddress);
+        string phone = Base64Encode(_account.Phone);
+        string address = Base64Encode(_account.AccountAddress);
         // string _email = Base64Decode(email);
 
         acc.Owner = _account.Owner;

@@ -22,20 +22,21 @@ namespace BookStoreManage.Controllers
 
         // GET: api/<FieldController>
         [HttpGet("GetAll")]
-        public IActionResult GetAlls()
+        public async Task<ActionResult<List<Field>>> GetAlls()
         {
-            return Ok(_context.Fields.ToList());
+            var list = await _repository.getAllField();
+            return Ok(list);
         }
 
         // GET api/<FieldController>/5
         [HttpGet("GetById/{id}")]
-        public IActionResult GetByID(int id)
+        public async Task<ActionResult<Field>> GetByID(int id)
         {
-            var result = _repository.getByID(id);
-            return Ok(result.Result);
+            var result = await _repository.getByID(id);
+            return Ok(result);
         }
         [HttpGet("GetByName/{name}")]
-        public async Task<ActionResult<List<Publisher>>> GetName(string name)
+        public async Task<ActionResult<List<Field>>> GetName(string name)
         {
             var list = await _repository.getByName(name);
             return Ok(list);
@@ -43,26 +44,26 @@ namespace BookStoreManage.Controllers
 
         // POST api/<FieldController>
         [HttpPost]
-        public IActionResult Post(FieldDTO field)
+        public async Task<ActionResult> Post(FieldDTO field)
         {
-            _repository.CreateField(field);
+            await _repository.CreateField(field);
             //return Ok(_repository.ShowLastOfList);
             return Ok(_context.Fields.ToList());
         }
 
         // PUT api/<FieldController>/5
         [HttpPut("Update/{id}")]
-        public IActionResult Put(int id, FieldDTO fields)
+        public async Task<ActionResult> Put(int id, FieldDTO fields)
         {
-            _repository.EditField(id, fields);
+            await _repository.EditField(id, fields);
             return Ok();
         }
 
         // DELETE api/<FieldController>/5
         [HttpDelete("Delete/{id}")]
-        public IActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            _repository.DeleteField(id);
+            await _repository.DeleteField(id);
             return Ok(_repository);
         }
     }

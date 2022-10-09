@@ -5,11 +5,11 @@ namespace BookStoreManage.IRepository
 {
     public interface IFieldRepository
     {
-        void CreateField(FieldDTO field);
+        Task CreateField(FieldDTO field);
 
-        void EditField(int fieldID, FieldDTO field);
+        Task EditField(int fieldID, FieldDTO field);
 
-        void DeleteField(int idField);
+        Task DeleteField(int idField);
 
         Task<List<Field>> getAllField();
 
