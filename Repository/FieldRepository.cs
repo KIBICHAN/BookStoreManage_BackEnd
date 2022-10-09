@@ -15,27 +15,28 @@ namespace BookStoreManage.Repository
         {
             _context = context;
         }
-        public void CreateField(FieldDTO _field)
+        public async Task CreateField(FieldDTO _field)
         {
             field = new Field();
             field.FieldName = _field.Name;
             field.FieldDescription = _field.description;
+
             _context.Add(field);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
-        public void DeleteField(int idField)
+        public async Task DeleteField(int idField)
         {
             var tmp = _context.Fields.Find(idField);
             if(tmp != null)
             {
                 _context.Remove(tmp);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             
         }
 
-        public void EditField(int idField ,FieldDTO fields)
+        public async Task EditField(int idField ,FieldDTO fields)
         {
             var tmp = _context.Fields.Find(idField);
             if (tmp != null)
@@ -43,19 +44,19 @@ namespace BookStoreManage.Repository
                 tmp.FieldName = fields.Name;
                 tmp.FieldDescription = fields.description;
                 _context.Update(tmp);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
         }
 
         public async Task<List<Field>> getAllField()
         {
-            var field = await _context.Fields.Include(b => b.Books).ToListAsync();
+            var field = await _context.Fields.Include(f => f.Books).ToListAsync();
             return field;
         }
 
         public async Task<Field> getByID(int idField)
         {
-            var field = await _context.Fields.FirstOrDefaultAsync(f => f.FieldID == idField);
+            var field = await _context.Fields.Include(f => f.Books).FirstOrDefaultAsync(f => f.FieldID == idField);
             return field;
         }
 
