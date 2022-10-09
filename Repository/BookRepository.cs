@@ -68,13 +68,18 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getAllBook()
         {
-            var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Field).ToListAsync();
+            var book = await _context.Books.ToListAsync();
             return book;
         }
 
+        /*public async Task<List<Book>> getBookByField(int fieldID)
+        {
+            //var book = await _context.Books.Where<b => b.>
+        }*/
+
         public async Task<Book> getByID(int idBook)
         {
-            var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Field).FirstOrDefaultAsync(b => b.BookID == idBook);
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == idBook);
             return book;
         }
 
