@@ -73,9 +73,12 @@ namespace BookStoreManage.Controllers
             var list = await _repository.ImportExcel(file);
             for (int i = 0; i < list.Count; i++)
             {
-                
+                var listname = await _repository.getByName(list[i].bookName);
+                if (listname.Count == 0)
+                {
                     await _repository.CreateBook(list[i]);
-                
+                }
+                //return StatusCode(StatusCodes.Status500InternalServerError, "Can't insert Book Name: " + list[i].bookName);
             }
             return Ok(_context.Books.ToList());
         }
