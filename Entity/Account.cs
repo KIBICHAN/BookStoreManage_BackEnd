@@ -37,7 +37,7 @@ namespace BookStoreManage.Entity
         // [Required(ErrorMessage = "Enter Account Email")]
         public string AccountEmail { get; set; }
 
-        [MaxLength(12)]
+        [MaxLength(20)]
         // [Required(ErrorMessage = "Enter Account Phone")]
         public string Phone { get; set; }
 

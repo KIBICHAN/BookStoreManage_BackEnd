@@ -24,50 +24,35 @@ public class AuthRepository : IAuthRepository
 
     public async Task<Account> CheckLogin(AuthDto account)
     {
-        try
+        var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == account.UserName);
+        if (account.UserName == _acc.UserName)
         {
-            var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == account.UserName);
-            if (account.UserName == _acc.UserName)
+            if (!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt))
             {
-                if (!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt))
-                {
-                    throw new BadHttpRequestException("Wrong password!");
-                }
+                throw new BadHttpRequestException("Wrong password!");
             }
-            else
-            {
-                throw new BadHttpRequestException("No!");
-            }
-            return _acc;
         }
-        catch (Exception e)
+        else
         {
-            Console.WriteLine("Fail!", e);
+            throw new BadHttpRequestException("No!");
         }
-        return null;
+        return _acc;
     }
 
     public async Task Register(AuthDto account)
     {
-        try
-        {
-            CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            _account = new Account();
-            Role role = new Role();
-            _account.UserName = account.UserName;
-            _account.PasswordHash = passwordHash;
-            _account.PasswordSalt = passwordSalt;
-            _account.Status = true;
-            _account.RoleID = 1;
+        _account = new Account();
+        Role role = new Role();
+        _account.UserName = account.UserName;
+        _account.PasswordHash = passwordHash;
+        _account.PasswordSalt = passwordSalt;
+        _account.Status = true;
+        _account.RoleID = 1;
 
-            _context.Accounts.Add(_account);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Fail!", e);
-        }
+        _context.Accounts.Add(_account);
+        await _context.SaveChangesAsync();
     }
 
     public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

@@ -1,15 +1,15 @@
 ﻿#nullable disable
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreManage.Entity
 {
+    [Index(nameof(Book.BookName), IsUnique = true)]
     public class Book
     {
         [Key]
         [Required]
         public int BookID { get; set; }
-
 
         [MaxLength(200)]
         [Required(ErrorMessage = "Enter Book Name")]

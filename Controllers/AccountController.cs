@@ -22,14 +22,15 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<List<Account>>> GetAll()
     {
         var list = await _accountRepository.GetAll();
-
         for (int i = 0; i < list.Count; i++)
         {
-            list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
-            list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
-            list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            if (list[i].AccountAddress != null && list[i].Phone != null && list[i].AccountAddress != null)
+            {
+                list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
+                list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
+                list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            }
         }
-
         return Ok(list);
     }
 
@@ -37,14 +38,15 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<List<Account>>> GetName(string name)
     {
         var list = await _accountRepository.GetName(name);
-
         for (int i = 0; i < list.Count; i++)
         {
-            list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
-            list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
-            list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            if (list[i].AccountAddress != null && list[i].Phone != null && list[i].AccountAddress != null)
+            {
+                list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
+                list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
+                list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+            }
         }
-
         return Ok(list);
     }
 
@@ -52,9 +54,9 @@ public class AccountController : ControllerBase
     public async Task<ActionResult<Account>> GetId(int id)
     {
         var account = await _accountRepository.FindByID(id);
-
         account.AccountEmail = _accountRepository.Base64Decode(account.AccountEmail);
-
+        account.Phone = _accountRepository.Base64Decode(account.Phone);
+        account.AccountAddress = _accountRepository.Base64Decode(account.AccountAddress);
         return Ok(account);
     }
 

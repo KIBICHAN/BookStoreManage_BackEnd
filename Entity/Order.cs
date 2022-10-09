@@ -14,7 +14,7 @@ namespace BookStoreManage.Entity
 
         [MaxLength(20)]
         [Required(ErrorMessage = "Enter Order Status")]
-        public double OrderStatus { get; set; }
+        public int OrderStatus { get; set; }
 
         [Required(ErrorMessage = "Enter Date of order")]
         public DateTime DateOfOrder { get; set; }
