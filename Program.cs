@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.137.71"), 7132));
+//builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.137.71"), 7132));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -52,6 +52,11 @@ builder.Services.AddDbContext<BookManageContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
+builder.Services.AddCors(p => p.AddPolicy("MyCors", build => {
+    // build.WithOrigins("https://localhost:7091");
+    build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IPublisherRepository, PublisherRepository>();
@@ -73,6 +78,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("MyCors");
 
 app.UseAuthentication();
 
