@@ -30,7 +30,7 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<Book>> GetByID(int id)
+        public async Task<ActionResult<List<Book>>> GetByID(int id)
         {
             var result = await _repository.getByID(id);
             return Ok(result);

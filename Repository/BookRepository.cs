@@ -77,9 +77,9 @@ namespace BookStoreManage.Repository
             //var book = await _context.Books.Where<b => b.>
         }*/
 
-        public async Task<Book> getByID(int idBook)
+        public async Task<List<Book>> getByID(int idBook)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == idBook);
+            var book = await _context.Books.Where(b => b.BookID == idBook).ToListAsync();
             return book;
         }
 

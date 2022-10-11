@@ -9,7 +9,7 @@ namespace BookStoreManage.IRepository
         Task EditBook(int bookID, BookDTO books);
         Task DeleteBook(int bookID);
         Task<List<Book>> getAllBook();
-        Task<Book> getByID(int bookID);
+        Task<List<Book>> getByID(int bookID);
         Task<List<Book>> getByName(string bookName);
         Task<List<BookDTO>> ImportExcel(IFormFile file);
 
