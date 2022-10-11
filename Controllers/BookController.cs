@@ -82,5 +82,19 @@ namespace BookStoreManage.Controllers
             }
             return Ok(_context.Books.ToList());
         }
+
+        [HttpGet("NumberOfBook")]
+        public ActionResult NumberOfBook()
+        {
+            int count =  _repository.totalNumberOfBook();
+            return Ok(count);
+        }
+
+        [HttpGet("NumberOfSold")]
+        public ActionResult NumberOfSold()
+        {
+            int count = _repository.NumberOfSold();
+            return Ok(count);
+        }
     }
 }
