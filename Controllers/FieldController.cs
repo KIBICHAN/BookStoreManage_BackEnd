@@ -28,6 +28,12 @@ namespace BookStoreManage.Controllers
             return Ok(list);
         }
 
+        [HttpGet("Get5Row")]
+        public ActionResult<List<Field>> GetFiveRows(){
+            var list = _repository.getFiveRows();
+            return Ok(list);
+        }
+
         // GET api/<FieldController>/5
         [HttpGet("GetById/{id}")]
         public async Task<ActionResult<Field>> GetByID(int id)
