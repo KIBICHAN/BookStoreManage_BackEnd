@@ -13,6 +13,10 @@ namespace BookStoreManage.IRepository
         Task<List<Book>> getByName(string bookName);
         Task<List<BookDTO>> ImportExcel(IFormFile file);
 
+        int totalNumberOfBook();
+
+        int NumberOfSold();
+
         //Task<List<Book>> getBookByField(int fieldID);
     }
 }

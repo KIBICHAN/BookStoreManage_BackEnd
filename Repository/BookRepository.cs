@@ -132,5 +132,17 @@ namespace BookStoreManage.Repository
                 throw new BadHttpRequestException(ex.Message);
             }
         }
+
+        public int totalNumberOfBook()
+        {
+            int count =  _context.Books.Sum(b => b.Quantity);
+            return count;
+        }
+
+        public int NumberOfSold()
+        {
+            int count = _context.OrderDetails.Sum(od => od.Quantity);
+            return count;
+        }
     }
 }
