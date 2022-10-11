@@ -8,7 +8,8 @@ namespace BookStoreManage.Repository
 {
     public class FieldRepository : IFieldRepository
     {
-        public static Field field = new Field();
+        private static Field field = new Field();
+        private static Random random = new Random();
         private BookManageContext _context;
 
         public FieldRepository(BookManageContext context)
@@ -60,13 +61,23 @@ namespace BookStoreManage.Repository
             return field;
         }
 
+        public IEnumerable<Field> getFiveRows(){
+            int count = countField();
+
+            IEnumerable<Field> field = _context.Fields.OfType<Field>().ToList().Skip(random.Next(1, count) - 5).Take(5);
+            return field;
+        }
+
         public async Task<List<Field>> getByName(string fieldName)
         {
             var field = await _context.Fields.Where(f => f.FieldName.Contains(fieldName)).ToListAsync();
                 //ToListAsync();
             return field;
-
         }
 
+        public int countField(){
+            int count = _context.Fields.Count();
+            return count;
+        }
     }
 }
