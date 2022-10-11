@@ -3,6 +3,7 @@ using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BookStoreManage.Repository
 {
@@ -55,9 +56,15 @@ namespace BookStoreManage.Repository
             return field;
         }
 
-        public async Task<Field> getByID(int idField)
+        public async Task<Field> getByIDTest(int idField)
         {
             var field = await _context.Fields.Include(f => f.Books).FirstOrDefaultAsync(f => f.FieldID == idField);
+            return field;
+        }
+
+        public async Task<List<Field>> getByID(int idField)
+        {
+           var field = await _context.Fields.Include(f => f.Books).Where(f => f.FieldID == idField).ToListAsync();
             return field;
         }
 

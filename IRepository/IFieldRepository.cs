@@ -9,7 +9,9 @@ namespace BookStoreManage.IRepository
         Task EditField(int fieldID, FieldDTO field);
         Task DeleteField(int idField);
         Task<List<Field>> getAllField();
-        Task<Field> getByID(int idField);
+
+        Task<Field> getByIDTest(int idField);
+        Task<List<Field>> getByID(int idField);
         Task<List<Field>> getByName(string fieldName);
         IEnumerable<Field> getFiveRows();
     }
