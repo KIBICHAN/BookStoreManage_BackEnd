@@ -30,7 +30,7 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<Book>> GetByID(int id)
+        public async Task<ActionResult<List<Book>>> GetByID(int id)
         {
             var result = await _repository.getByID(id);
             return Ok(result);
@@ -81,6 +81,20 @@ namespace BookStoreManage.Controllers
                 //return StatusCode(StatusCodes.Status500InternalServerError, "Can't insert Book Name: " + list[i].bookName);
             }
             return Ok(_context.Books.ToList());
+        }
+
+        [HttpGet("NumberOfBook")]
+        public ActionResult NumberOfBook()
+        {
+            int count =  _repository.totalNumberOfBook();
+            return Ok(count);
+        }
+
+        [HttpGet("NumberOfSold")]
+        public ActionResult NumberOfSold()
+        {
+            int count = _repository.NumberOfSold();
+            return Ok(count);
         }
     }
 }

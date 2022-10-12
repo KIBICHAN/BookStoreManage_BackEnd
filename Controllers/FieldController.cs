@@ -36,11 +36,12 @@ namespace BookStoreManage.Controllers
 
         // GET api/<FieldController>/5
         [HttpGet("GetById/{id}")]
-        public async Task<ActionResult<Field>> GetByID(int id)
+        public async Task<ActionResult<List<Field>>> GetByID(int id)
         {
             var result = await _repository.getByID(id);
             return Ok(result);
         }
+
         [HttpGet("GetByName/{name}")]
         public async Task<ActionResult<List<Field>>> GetName(string name)
         {
