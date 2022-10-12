@@ -11,7 +11,7 @@ namespace BookStoreManage.IRepository
         Task<List<Field>> getAllField();
 
         Task<Field> getByIDTest(int idField);
-        Task<List<Field>> getByID(int idField);
+        Task<List<FieldBook>> getByID(int idField);
         Task<List<Field>> getByName(string fieldName);
         IEnumerable<Field> getFiveRows();
     }
