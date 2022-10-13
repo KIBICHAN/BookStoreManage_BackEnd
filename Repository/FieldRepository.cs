@@ -53,44 +53,10 @@ namespace BookStoreManage.Repository
             }
         }
 
-        public async Task<List<FieldBook>> getAllField()
+        public async Task<List<Field>> getAllField()
         {
             var field = await _context.Fields.Include(f => f.Books).ToListAsync();
-            for (int i = 0; i < field.Count(); i++)
-            {
-                var id = field[i].Books.Where(b => b.FieldID == field[i].FieldID).Select(b => new
-                {
-                    b.BookID,
-                    b.BookName,
-                    b.AuthorID,
-                    b.Description,
-                    b.PublisherID,
-                    b.Price,
-                    b.Image,
-                    b.DateOfPublished
-                }).ToList();
-
-                for (int y = 0; y < id.Count; y++)
-                {
-                    authorName.Add(_context.Authors.Where(a => a.AuthorID == id[y].AuthorID).Select(a => a.AuthorName).FirstOrDefault());
-                    publisherName.Add(_context.Publishers.Where(p => p.PublisherID == id[y].PublisherID).Select(p => p.PublisherName).FirstOrDefault());
-                    _field.Add(new FieldBook
-                    {
-                        fieldId = field[i].FieldID,
-                        bookId = id[y].BookID,
-                        bookName = id[y].BookName,
-                        bookDescription = id[y].Description,
-                        price = id[y].Price,
-                        image = id[y].Image,
-                        dateofpublished = id[y].DateOfPublished,
-                        fiedlName = field[i].FieldName,
-                        authorName = authorName[y],
-                        publisherName = publisherName[y],
-
-                    });
-                }
-            }
-            return _field;
+            return field;
         }
 
         // public List<Field> getByIDTest(int idField)
@@ -103,43 +69,12 @@ namespace BookStoreManage.Repository
         //     return field;
         // }
 
-        public async Task<List<FieldBook>> getByID(int idField)
+        public async Task<List<Field>> getByID(int idField)
         {
-            var field = await _context.Fields.Include(f => f.Books).Where(f => f.FieldID == idField).ToListAsync();
-            for (int i = 0; i < field.Count(); i++)
-            {
-                var id = field[i].Books.Where(b => b.FieldID == idField).Select(b => new
-                {
-                    b.BookID,
-                    b.BookName,
-                    b.AuthorID,
-                    b.Description,
-                    b.PublisherID,
-                    b.Price,
-                    b.Image,
-                    b.DateOfPublished
-                }).ToList();
-
-                for (int y = 0; y < id.Count; y++)
-                {
-                    authorName.Add(_context.Authors.Where(a => a.AuthorID == id[y].AuthorID).Select(a => a.AuthorName).FirstOrDefault());
-                    publisherName.Add(_context.Publishers.Where(p => p.PublisherID == id[y].PublisherID).Select(p => p.PublisherName).FirstOrDefault());
-                    _field.Add(new FieldBook
-                    {
-                        fieldId = field[i].FieldID,
-                        bookId = id[y].BookID,
-                        bookName = id[y].BookName,
-                        bookDescription = id[y].Description,
-                        price = id[y].Price,
-                        image = id[y].Image,
-                        dateofpublished = id[y].DateOfPublished,
-                        fiedlName = field[i].FieldName,
-                        authorName = authorName[y],
-                        publisherName = publisherName[y],
-                    });
-                }
-            }
-            return _field;
+            var field = await _context.Fields
+            .Include(f => f.Books).ThenInclude(b => b.Author)
+            .Where(f => f.FieldID == idField).ToListAsync();
+            return field;
         }
 
         public IEnumerable<Field> getFiveRows()
