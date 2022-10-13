@@ -4,6 +4,7 @@ namespace BookStoreManage.DTO;
 public class FieldBook
 {
     public int fieldId { get; set; }
+    public int bookId {get; set;}
     public string bookName { get; set; }
     public string bookDescription { get; set; }
     public double price { get; set; }
