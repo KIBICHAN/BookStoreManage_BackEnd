@@ -72,14 +72,9 @@ namespace BookStoreManage.Repository
             return book;
         }
 
-        /*public async Task<List<Book>> getBookByField(int fieldID)
-        {
-            //var book = await _context.Books.Where<b => b.>
-        }*/
-
         public async Task<List<Book>> getByID(int idBook)
         {
-            var book = await _context.Books.Where(b => b.BookID == idBook).ToListAsync();
+            var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Where(b => b.BookID == idBook).ToListAsync();
             return book;
         }
 
