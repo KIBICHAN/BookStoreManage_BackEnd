@@ -18,28 +18,56 @@ public class OrderController : ControllerBase
     [HttpGet("Get")]
     public async Task<ActionResult<List<Order>>> GetAll()
     {
-        var list = await _orderRepository.GetAll();
-        return Ok(list);
+        try
+        {
+            var list = await _orderRepository.GetAll();
+            return Ok(list);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpGet("GetByOrderId/{id}")]
     public async Task<ActionResult<Order>> GetOrder(int id)
     {
-        var order = await _orderRepository.FindByOrderID(id);
-        return Ok(order);
+        try
+        {
+            var order = await _orderRepository.FindByOrderID(id);
+            return Ok(order);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpPost("Create")]
     public async Task<ActionResult> CreateNew(OrderDto order)
     {
-        await _orderRepository.CreateNewOrder(order);
-        return Ok();
+        try
+        {
+            await _orderRepository.CreateNewOrder(order);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpPut("UpdateStatus/{id}")]
     public async Task<ActionResult> UpdateStatus(int id, int status)
     {
-        await _orderRepository.UpdateStatus(id, status);
-        return Ok();
+        try
+        {
+            await _orderRepository.UpdateStatus(id, status);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }
