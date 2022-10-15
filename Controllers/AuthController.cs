@@ -11,7 +11,7 @@ namespace BookStoreManage.Controllers
     // [Authorize]
     public class AuthController : ControllerBase
     {
-        private static Account? account = new Account();
+        private static Account account = new Account();
         private readonly IAuthRepository _authRepository;
         private readonly BookManageContext _context;
         public AuthController(IAuthRepository authRepository, BookManageContext context)
@@ -23,49 +23,82 @@ namespace BookStoreManage.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<Account>> Register(AuthDto request)
         {
-            await _authRepository.Register(request);
-            return Ok(_context.Accounts.ToList());
+            try
+            {
+                await _authRepository.Register(request);
+                return Ok(_context.Accounts.ToList());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<Account>> Login(AuthDto request)
         {
-            var acc = await _authRepository.CheckLogin(request);
-            string token = _authRepository.CreateToken(acc);
+            try
+            {
+                var acc = await _authRepository.CheckLogin(request);
+                string token = _authRepository.CreateToken(acc);
 
-            var refreshToken = _authRepository.GenerateRefreshToken();
-            var setToken = _authRepository.SetRefreshToken(refreshToken, Response);
+                var refreshToken = _authRepository.GenerateRefreshToken();
+                var setToken = _authRepository.SetRefreshToken(refreshToken, Response);
 
-            account = acc;
-            account.RefreshToken = setToken.RefreshToken;
-            account.TokenExpires = setToken.TokenExpires;
+                account = acc;
+                account.RefreshToken = setToken.RefreshToken;
+                account.TokenExpires = setToken.TokenExpires;
 
-            return Ok(token);
+                return Ok(token);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost("logout"), Authorize]
-        public ActionResult Logout(){
-            account = null;
-            return Ok();
+        public ActionResult Logout()
+        {
+            try
+            {
+                account = null;
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost("refresh-token")]
-        public ActionResult<string> RefreshToken(){
-            var refreshToken = Request.Cookies["refreshToken"];
-            if(!account.RefreshToken.Equals(refreshToken)){
-                return Unauthorized("Invalid Refresh Token.");
-            }else if(account.TokenExpires < DateTime.Now){
-                return Unauthorized("Token expired.");
+        public ActionResult<string> RefreshToken()
+        {
+            try
+            {
+                var refreshToken = Request.Cookies["refreshToken"];
+                if (account.RefreshToken.Equals(refreshToken))
+                {
+                    return Unauthorized("Invalid Refresh Token.");
+                }
+                else if (account.TokenExpires < DateTime.Now)
+                {
+                    return Unauthorized("Token expired.");
+                }
+
+                string token = _authRepository.CreateToken(account);
+                var newRefreshToken = _authRepository.GenerateRefreshToken();
+                var setToken = _authRepository.SetRefreshToken(newRefreshToken, Response);
+
+                account.RefreshToken = setToken.RefreshToken;
+                account.TokenExpires = setToken.TokenExpires;
+
+                return Ok(token);
             }
-
-            string token = _authRepository.CreateToken(account);
-            var newRefreshToken = _authRepository.GenerateRefreshToken();
-            var setToken = _authRepository.SetRefreshToken(newRefreshToken, Response);
-
-            account.RefreshToken = setToken.RefreshToken;
-            account.TokenExpires = setToken.TokenExpires;
-
-            return Ok(token);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet("authen"), Authorize(Roles = "Admin")]

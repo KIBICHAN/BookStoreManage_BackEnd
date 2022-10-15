@@ -108,6 +108,7 @@ public class AuthRepository : IAuthRepository
 
     public Account SetRefreshToken(RefreshToken newRefreshToken, HttpResponse response)
     {
+        _account = new Account();
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
