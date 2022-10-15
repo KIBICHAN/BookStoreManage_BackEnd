@@ -1,12 +1,14 @@
 ﻿using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreManage.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    // [Authorize(Roles = "Admin")]
     public class AuthorController : Controller
     {
         private readonly IAuthorRepository _repository;

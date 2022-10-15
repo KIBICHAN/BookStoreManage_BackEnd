@@ -1,6 +1,7 @@
 ﻿using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace BookStoreManage.Controllers
             _repository = repository;
         }
 
+        // [AllowAnonymous]
         [HttpGet("Get")]
         public async Task<ActionResult<List<Book>>> GetAlls()
         {
@@ -36,6 +38,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        // [AllowAnonymous]
         [HttpGet("GetById/{id}")]
         public async Task<ActionResult<List<Book>>> GetByID(int id)
         {
@@ -50,7 +53,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-
+        // [AllowAnonymous]
         [HttpGet("GetByName/{name}")]
         public async Task<ActionResult<List<Book>>> GetByName(string name)
         {
@@ -65,7 +68,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-
+        // [Authorize(Roles = "Admin")]
         [HttpPost("Create")]
         public async Task<ActionResult> CreateNewBook(BookDTO bookDTO)
         {
@@ -81,6 +84,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> UpdateBook(int id, BookDTO bookDTO)
         {
@@ -95,6 +99,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> DeleteBook(int id)
         {
@@ -109,6 +114,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpPost("Import")]
         public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file)
         {
@@ -132,6 +138,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpGet("NumberOfBook")]
         public ActionResult NumberOfBook()
         {
@@ -146,6 +153,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        // [Authorize(Roles = "Admin")]
         [HttpGet("NumberOfSold")]
         public ActionResult NumberOfSold()
         {
