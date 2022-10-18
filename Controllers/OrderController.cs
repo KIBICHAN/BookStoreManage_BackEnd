@@ -58,11 +58,24 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut("UpdateStatus/{id}")]
-    public async Task<ActionResult> UpdateStatus(int id, int status)
+    public async Task<ActionResult> UpdateStatus(int id, bool status)
     {
         try
         {
             await _orderRepository.UpdateStatus(id, status);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpDelete("Delete/{id}")]
+    public async Task<ActionResult> DeleteOrder(int id){
+        try
+        {
+            await _orderRepository.DeleteOrder(id);
             return Ok();
         }
         catch (Exception e)

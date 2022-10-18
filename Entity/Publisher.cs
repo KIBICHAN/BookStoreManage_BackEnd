@@ -7,14 +7,11 @@ namespace BookStoreManage.Entity
     {
         [Key]
         public int PublisherID { get; set; }
-
         [MaxLength(100)]
         [Required(ErrorMessage = "Enter Publisher Name")]
         public string PublisherName { get; set; }
-
         [MaxLength(200)]
         public string FieldAddress { get; set; }
-
         public virtual ICollection<Book> Books { get; set; }
     }
 }

@@ -47,14 +47,30 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateStatus(int id, int status)
+    public async Task UpdateStatus(int id, bool status)
     {
-        var order = await FindByOrderID(id);
+        if (status == false)
+        {
+            var order = await FindByOrderID(id);
+            order.OrderStatus = status;
 
-        order.OrderStatus = status;
+            var _orderDetail = await _context.OrderDetails.Where(d => d.OrderID == id).Select(d => new OrderDetailDto
+            {
+                BookID = d.BookID,
+                Quantity = d.Quantity
+            }).ToListAsync();
 
-        _context.Orders.Update(order);
-        await _context.SaveChangesAsync();
+            for (int i = 0; i < _orderDetail.Count; i++)
+            {
+                var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _orderDetail[i].BookID);
+
+                _book.Quantity = _book.Quantity + _orderDetail[i].Quantity;
+                _context.Books.Update(_book);
+            }
+
+            _context.Orders.Update(order);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task CreateNewOrderDetail(List<OrderDetailDto> _list, int orederId)
@@ -86,22 +102,10 @@ public class OrderRepository : IOrderRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateTotalPrice(int id, int quantity)
+    public async Task DeleteOrder(int id)
     {
-        var detail = await FindByOrderDetailID(id);
-
-        detail.TotalPrice = quantity * detail.Price;
-        detail.Quantity = quantity;
-
-        _context.OrderDetails.Update(detail);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteOrderDetail(int id)
-    {
-        var detail = await FindByOrderDetailID(id);
+        var detail = await FindByOrderID(id);
         _context.Remove(detail);
         await _context.SaveChangesAsync();
     }
-
 }
