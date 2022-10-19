@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.137.71"), 7132));
+//builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.137.71"), 7132));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -39,7 +39,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:TokenSecret").Value)),
         ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateAudience = false,
+        // ValidIssuer = "mytest.com",
+        // ValidAudience = "mytest.com",
     };
 });
 
