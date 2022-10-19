@@ -8,21 +8,12 @@ namespace BookStoreManage.Entity
     {
         [Key]
         public int OrderID { get; set; }
-
-        [Required(ErrorMessage = "Enter Total Amount")]
         public double TotalAmount { get; set; }
-
         [MaxLength(20)]
-        [Required(ErrorMessage = "Enter Order Status")]
-        public int OrderStatus { get; set; }
-
-        [Required(ErrorMessage = "Enter Date of order")]
+        public bool OrderStatus { get; set; }
         public DateTime DateOfOrder { get; set; }
-
         public int AccountID {get; set;}
         public virtual Account Account { get; set; }
-
-
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

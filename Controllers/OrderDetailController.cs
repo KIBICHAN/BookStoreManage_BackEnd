@@ -42,32 +42,4 @@ public class OrderDetailController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-
-    [HttpPut("UpdateTotal/{id}")]
-    public async Task<ActionResult> UpdateSubTotal(int id, int quantity)
-    {
-        try
-        {
-            await _orderRepository.UpdateTotalPrice(id, quantity);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-
-    [HttpDelete("Delete/{id}")]
-    public async Task<ActionResult> Remove(int id)
-    {
-        try
-        {
-            await _orderRepository.DeleteOrderDetail(id);
-            return Ok();
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
 }
