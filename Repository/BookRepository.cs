@@ -22,6 +22,7 @@ namespace BookStoreManage.Repository
         public async Task CreateBook(BookDTO bookDTO)
         {
             book = new Book();
+            book.StripeID = bookDTO.stripeId;
             book.BookName = bookDTO.bookName;
             book.Price = bookDTO.price;
             book.Quantity = bookDTO.quantity;
@@ -51,6 +52,7 @@ namespace BookStoreManage.Repository
             var tmp = _context.Books.Find(bookID);
             if (tmp != null)
             {
+                tmp.StripeID = bookDTO.stripeId;
                 tmp.BookName = bookDTO.bookName;
                 tmp.Price = bookDTO.price;
                 tmp.Quantity = bookDTO.quantity;
@@ -130,7 +132,8 @@ namespace BookStoreManage.Repository
                                     fieldID = fieldId,
                                     publisherID = publisherId,
                                     authorID = authorId,
-                                    DateOfPublished = DateTime.Parse(worksheet.Cells[row, 9].Value.ToString())
+                                    DateOfPublished = DateTime.Parse(worksheet.Cells[row, 9].Value.ToString()),
+                                    stripeId = worksheet.Cells[row, 10].Value.ToString()
                                 });
                             }
                             catch (Exception e)
