@@ -43,7 +43,7 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpPost("Create/{id}")]
+    [HttpPost("Create/{accountId}")]
     public async Task<ActionResult> CreateNew(int accountId)
     {
         try
