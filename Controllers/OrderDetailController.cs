@@ -30,11 +30,11 @@ public class OrderDetailController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<ActionResult> CreateNew(List<OrderDetailDto> list, int orederId)
+    public async Task<ActionResult> CreateNew(List<OrderDetailDto> list)
     {
         try
         {
-            await _orderRepository.CreateNewOrderDetail(list, orederId);
+            await _orderRepository.CreateNewOrderDetail(list);
             return Ok();
         }
         catch (Exception e)
