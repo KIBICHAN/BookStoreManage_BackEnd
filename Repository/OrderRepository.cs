@@ -34,13 +34,13 @@ public class OrderRepository : IOrderRepository
         return detail;
     }
 
-    public async Task CreateNewOrder(OrderDto _order)
+    public async Task CreateNewOrder(int accountId)
     {
         order = new Order();
 
-        order.OrderStatus = _order.OrderStatus;
+        order.OrderStatus = true;
         order.DateOfOrder = DateTime.Today;
-        order.AccountID = _order.AccountID;
+        order.AccountID = accountId;
         order.TotalAmount = 0;
 
         _context.Orders.Add(order);

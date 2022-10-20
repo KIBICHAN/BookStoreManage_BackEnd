@@ -43,12 +43,12 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpPost("Create")]
-    public async Task<ActionResult> CreateNew(OrderDto order)
+    [HttpPost("Create/{id}")]
+    public async Task<ActionResult> CreateNew(int accountId)
     {
         try
         {
-            await _orderRepository.CreateNewOrder(order);
+            await _orderRepository.CreateNewOrder(accountId);
             return Ok();
         }
         catch (Exception e)

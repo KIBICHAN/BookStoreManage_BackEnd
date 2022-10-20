@@ -101,6 +101,16 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        [HttpPost("verify-access-token")]
+        public ActionResult<string> VerifyAccessToken(string saccessToken){
+            try{
+                
+                return Ok();
+            }catch(Exception e){
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpGet("authen"), Authorize(Roles = "Admin")]
         public ActionResult<Account> Authen()
         {
