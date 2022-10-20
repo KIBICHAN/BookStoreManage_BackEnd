@@ -34,7 +34,7 @@ public class OrderRepository : IOrderRepository
         return detail;
     }
 
-    public async Task CreateNewOrder(int accountId)
+    public async Task<int> CreateNewOrder(int accountId)
     {
         order = new Order();
 
@@ -45,6 +45,8 @@ public class OrderRepository : IOrderRepository
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
+
+        return _context.Orders.OrderByDescending(a => a.OrderID).First().OrderID;
     }
 
     public async Task UpdateStatus(int id, bool status)

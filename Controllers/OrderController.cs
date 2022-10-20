@@ -48,8 +48,8 @@ public class OrderController : ControllerBase
     {
         try
         {
-            await _orderRepository.CreateNewOrder(accountId);
-            return Ok();
+            int orderId = await _orderRepository.CreateNewOrder(accountId);
+            return Ok(orderId);
         }
         catch (Exception e)
         {
