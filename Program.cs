@@ -8,6 +8,8 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using System.Text.Json.Serialization;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,9 +30,15 @@ builder.Services.AddSwaggerGen(
             Name = "Authorization",
             Type = SecuritySchemeType.ApiKey
         });
-        
+
         options.OperationFilter<SecurityRequirementsOperationFilter>();
     });
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("D:\\Swp391\\BookStoreManage\\firebaseconfig.json"),
+    ProjectId = "book-store-management-abf1d",
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -48,13 +56,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 var connectionString = builder.Configuration.GetConnectionString("BookManageContextConection") ??
     throw new InvalidOperationException("Connection string 'BookManageContextConection' not found.");
 
-
 builder.Services.AddDbContext<BookManageContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
 
-builder.Services.AddCors(p => p.AddPolicy("MyCors", build => {
+builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
+{
     // build.WithOrigins("https://localhost:7091");
     build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));

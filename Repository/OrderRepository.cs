@@ -22,9 +22,9 @@ public class OrderRepository : IOrderRepository
         return orderList;
     }
 
-    public async Task<Order> FindByOrderID(int id)
+    public async Task<List<Order>> FindByOrderID(int id)
     {
-        var order = await _context.Orders.Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.OrderID == id);
+        var order = await _context.Orders.Include(o => o.OrderDetails).Where(o => o.OrderID == id).ToListAsync();
         return order;
     }
 
@@ -53,7 +53,7 @@ public class OrderRepository : IOrderRepository
     {
         if (status == false)
         {
-            var order = await FindByOrderID(id);
+            var order = await _context.Orders.FindAsync(id);
             order.OrderStatus = status;
 
             var _orderDetail = await _context.OrderDetails.Where(d => d.OrderID == id).Select(d => new OrderDetailDto
