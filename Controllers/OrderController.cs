@@ -43,6 +43,20 @@ public class OrderController : ControllerBase
         }
     }
 
+    [HttpGet("GetByCustomerId/{id}")]
+    public async Task<ActionResult<List<Order>>> GetOrderByCustomer(int id)
+    {
+        try
+        {
+            var order = await _orderRepository.FindByCustomerID(id);
+            return Ok(order);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
     [HttpPost("Create/{accountId}")]
     public async Task<ActionResult> CreateNew(int accountId)
     {
