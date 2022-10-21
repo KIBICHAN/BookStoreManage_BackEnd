@@ -8,6 +8,8 @@ using BookStoreManage.DTO;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using FirebaseAdmin.Auth;
+using Firebase.Auth;
 
 namespace BookStoreManage.Repository;
 
@@ -49,7 +51,7 @@ public class AuthRepository : IAuthRepository
         _account.PasswordHash = passwordHash;
         _account.PasswordSalt = passwordSalt;
         _account.Status = true;
-        _account.RoleID = 3;
+        _account.RoleID = 2;
 
         _context.Accounts.Add(_account);
         await _context.SaveChangesAsync();
@@ -121,5 +123,51 @@ public class AuthRepository : IAuthRepository
         _account.TokenExpires = newRefreshToken.Expires;
 
         return _account;
+    }
+
+    public async Task<JWTDto> AuthenFirebase(string idToken)
+    {
+        string key = "AIzaSyAwB1GD5SLBrIMuOjp6DrOUhNGjkUKPUz0";
+        string jwt = "";
+        JWTDto jwtDto = null;
+        FirebaseToken decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(idToken);
+        string uid = decodedToken.Uid;
+        var authenUser = new FirebaseAuthProvider(new FirebaseConfig(key));
+        var authen = authenUser.GetUserAsync(idToken);
+        User user = authen.Result;
+        var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.UserName == user.Email.ToLower()).FirstOrDefaultAsync();
+        if (tagetAccount == null)
+        {
+            return null;
+        }
+        jwt = ReCreateFirebaseToken(tagetAccount, uid);
+        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.UserName, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        return (jwtDto);
+    }
+
+    public string ReCreateFirebaseToken(Account account, string uid)
+    {
+        List<Claim> claims = new List<Claim>{
+            new Claim(ClaimTypes.Name, account.Owner),
+            new Claim(ClaimTypes.Email, account.UserName),
+            new Claim(ClaimTypes.Uri, account.Image),
+            new Claim(ClaimTypes.PostalCode, account.AccountID + ""),
+            new Claim(ClaimTypes.Role, account.Role.RoleName),
+            new Claim(ClaimTypes.GivenName, uid)
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:TokenSecret").Value));
+
+        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.Now.AddDays(1),
+            signingCredentials: cred
+        );
+
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return jwt;
     }
 }

@@ -30,7 +30,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("GetByOrderId/{id}")]
-    public async Task<ActionResult<Order>> GetOrder(int id)
+    public async Task<ActionResult<List<Order>>> GetOrder(int id)
     {
         try
         {

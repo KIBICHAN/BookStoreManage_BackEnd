@@ -3,6 +3,7 @@ using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using BookStoreManage.DTO;
 using Microsoft.AspNetCore.Authorization;
+using FirebaseAdmin.Auth;
 
 namespace BookStoreManage.Controllers
 {
@@ -102,16 +103,16 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpPost("verify-access-token")]
-        public ActionResult<string> VerifyAccessToken(string saccessToken){
+        public async Task<IActionResult> VerifyAccessToken(string accessToken){
             try{
-                
-                return Ok();
+                var result = await _authRepository.AuthenFirebase(accessToken);
+                return Ok(result);
             }catch(Exception e){
                 return BadRequest(e.Message);
             }
         }
 
-        [HttpGet("authen"), Authorize(Roles = "Admin")]
+        [HttpGet("authen"), Authorize(Roles = "Staff")]
         public ActionResult<Account> Authen()
         {
             return Ok(_context.Accounts.ToList());
