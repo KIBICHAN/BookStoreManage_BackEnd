@@ -22,9 +22,9 @@ public class OrderRepository : IOrderRepository
         return orderList;
     }
 
-    public async Task<Order> FindByOrderID(int id)
+    public async Task<List<Order>> FindByOrderID(int id)
     {
-        var order = await _context.Orders.Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.OrderID == id);
+        var order = await _context.Orders.Include(o => o.OrderDetails).Where(o => o.OrderID == id).ToListAsync();
         return order;
     }
 
@@ -34,24 +34,26 @@ public class OrderRepository : IOrderRepository
         return detail;
     }
 
-    public async Task CreateNewOrder(OrderDto _order)
+    public async Task<int> CreateNewOrder(int accountId)
     {
         order = new Order();
 
-        order.OrderStatus = _order.OrderStatus;
+        order.OrderStatus = true;
         order.DateOfOrder = DateTime.Today;
-        order.AccountID = _order.AccountID;
+        order.AccountID = accountId;
         order.TotalAmount = 0;
 
         _context.Orders.Add(order);
         await _context.SaveChangesAsync();
+
+        return _context.Orders.OrderByDescending(a => a.OrderID).First().OrderID;
     }
 
     public async Task UpdateStatus(int id, bool status)
     {
         if (status == false)
         {
-            var order = await FindByOrderID(id);
+            var order = await _context.Orders.FindAsync(id);
             order.OrderStatus = status;
 
             var _orderDetail = await _context.OrderDetails.Where(d => d.OrderID == id).Select(d => new OrderDetailDto
@@ -73,32 +75,37 @@ public class OrderRepository : IOrderRepository
         }
     }
 
-    public async Task CreateNewOrderDetail(List<OrderDetailDto> _list, int orederId)
+    public async Task CreateNewOrderDetail(List<OrderDetailDto> _list)
     {
-        double total = 0;
-        var _order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == orederId);
-
         for (int i = 0; i < _list.Count; i++)
         {
-            detail = new OrderDetail();
-            var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _list[i].BookID);
+            var _order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == _list[i].OrderID);
+            if (_order.TotalAmount == 0)
+            {
+                double total = 0;
+                detail = new OrderDetail();
+                var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _list[i].BookID);
 
-            detail.OrderID = orederId;
-            detail.BookID = _list[i].BookID;
-            detail.Quantity = _list[i].Quantity;
-            detail.Price = _book.Price;
-            detail.TotalPrice = _list[i].Quantity * _book.Price;
+                detail.OrderID = _list[i].OrderID;
+                detail.BookID = _list[i].BookID;
+                detail.Quantity = _list[i].Quantity;
+                detail.Price = _book.Price;
+                detail.TotalPrice = _list[i].Quantity * _book.Price;
 
-            _book.Quantity = _book.Quantity - _list[i].Quantity;
+                _book.Quantity = _book.Quantity - _list[i].Quantity;
 
-            total = total + detail.TotalPrice;
+                total = total + detail.TotalPrice;
 
-            _context.OrderDetails.Add(detail);
-            _context.Books.Update(_book);
+                _context.OrderDetails.Add(detail);
+                _context.Books.Update(_book);
+                _order.TotalAmount = total;
+                _context.Orders.Update(_order);
+            }
+            else
+            {
+                Console.WriteLine("Can't");
+            }
         }
-
-        _order.TotalAmount = total;
-        _context.Orders.Update(_order);
         await _context.SaveChangesAsync();
     }
 

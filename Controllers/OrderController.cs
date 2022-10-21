@@ -30,7 +30,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet("GetByOrderId/{id}")]
-    public async Task<ActionResult<Order>> GetOrder(int id)
+    public async Task<ActionResult<List<Order>>> GetOrder(int id)
     {
         try
         {
@@ -43,13 +43,13 @@ public class OrderController : ControllerBase
         }
     }
 
-    [HttpPost("Create")]
-    public async Task<ActionResult> CreateNew(OrderDto order)
+    [HttpPost("Create/{accountId}")]
+    public async Task<ActionResult> CreateNew(int accountId)
     {
         try
         {
-            await _orderRepository.CreateNewOrder(order);
-            return Ok();
+            int orderId = await _orderRepository.CreateNewOrder(accountId);
+            return Ok(orderId);
         }
         catch (Exception e)
         {

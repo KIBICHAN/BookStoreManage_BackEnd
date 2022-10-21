@@ -78,6 +78,7 @@ namespace BookStoreManage.Repository
         {
             var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Where(b => b.BookID == idBook).Select(b => new Book
             {
+                StripeID = b.StripeID,
                 BookID = b.BookID,
                 BookName = b.BookName,
                 Price = b.Price,
