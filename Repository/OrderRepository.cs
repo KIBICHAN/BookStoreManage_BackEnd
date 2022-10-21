@@ -77,29 +77,34 @@ public class OrderRepository : IOrderRepository
 
     public async Task CreateNewOrderDetail(List<OrderDetailDto> _list)
     {
-        double total = 0;
-
         for (int i = 0; i < _list.Count; i++)
         {
             var _order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == _list[i].OrderID);
+            if (_order.TotalAmount == 0)
+            {
+                double total = 0;
+                detail = new OrderDetail();
+                var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _list[i].BookID);
 
-            detail = new OrderDetail();
-            var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _list[i].BookID);
+                detail.OrderID = _list[i].OrderID;
+                detail.BookID = _list[i].BookID;
+                detail.Quantity = _list[i].Quantity;
+                detail.Price = _book.Price;
+                detail.TotalPrice = _list[i].Quantity * _book.Price;
 
-            detail.OrderID = _list[i].OrderID;
-            detail.BookID = _list[i].BookID;
-            detail.Quantity = _list[i].Quantity;
-            detail.Price = _book.Price;
-            detail.TotalPrice = _list[i].Quantity * _book.Price;
+                _book.Quantity = _book.Quantity - _list[i].Quantity;
 
-            _book.Quantity = _book.Quantity - _list[i].Quantity;
+                total = total + detail.TotalPrice;
 
-            total = total + detail.TotalPrice;
-
-            _context.OrderDetails.Add(detail);
-            _context.Books.Update(_book);
-            _order.TotalAmount = total;
-            _context.Orders.Update(_order);
+                _context.OrderDetails.Add(detail);
+                _context.Books.Update(_book);
+                _order.TotalAmount = total;
+                _context.Orders.Update(_order);
+            }
+            else
+            {
+                Console.WriteLine("Can't");
+            }
         }
         await _context.SaveChangesAsync();
     }
