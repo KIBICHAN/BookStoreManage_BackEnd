@@ -23,7 +23,7 @@ public class AccountRepository : IAccountRepository
 
     public async Task<List<Account>> GetName(string name)
     {
-        var nameList = await _context.Accounts.Where(a => a.Owner.Contains(name)).Include(a => a.Orders).ToListAsync();
+        var nameList = await _context.Accounts.Where(a => a.Owner.Trim().ToLower().Contains(name.Trim().ToLower())).Include(a => a.Orders).ToListAsync();
         return nameList;
     }
 

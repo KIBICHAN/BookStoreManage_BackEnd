@@ -26,7 +26,7 @@ public class PublisherRepository : IPublisherRepository
     public async Task<List<Publisher>> GetName(string name)
     {
 
-        var list = await _context.Publishers.Where(p => p.PublisherName.Contains(name)).ToListAsync();
+        var list = await _context.Publishers.Where(p => p.PublisherName.Trim().ToLower().Contains(name.Trim().ToLower())).ToListAsync();
         return list;
 
     }
