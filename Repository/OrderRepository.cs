@@ -28,9 +28,16 @@ public class OrderRepository : IOrderRepository
         return order;
     }
 
+
+    public async Task<List<Order>> FindByCustomerID(int id)
+    {
+        var customer = await _context.Orders.Include(o => o.OrderDetails).Where(o => o.AccountID == id).ToListAsync();
+        return customer;
+    }
+
     public async Task<OrderDetail> FindByOrderDetailID(int id)
     {
-        var detail = await _context.OrderDetails.FirstOrDefaultAsync(o => o.OrderDetailID == id);
+        var detail = await _context.OrderDetails.Include(b => b.Book).FirstOrDefaultAsync(o => o.OrderDetailID == id);
         return detail;
     }
 
