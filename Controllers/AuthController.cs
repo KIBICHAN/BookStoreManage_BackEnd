@@ -103,16 +103,24 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpPost("verify-access-token")]
-        public async Task<IActionResult> VerifyAccessToken(string accessToken){
-            try{
+        public async Task<IActionResult> VerifyAccessToken(string accessToken)
+        {
+            try
+            {
                 var result = await _authRepository.AuthenFirebase(accessToken);
-                return Ok(result);
-            }catch(Exception e){
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return Unauthorized("Account not valid!");
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
         }
 
-        [HttpGet("authen"), Authorize(Roles = "Staff")]
+        [HttpGet("authen"), Authorize(Roles = "Staff"), Authorize(Roles = "Admin")]
         public ActionResult<Account> Authen()
         {
             return Ok(_context.Accounts.ToList());
