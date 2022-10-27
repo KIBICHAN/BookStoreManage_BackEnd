@@ -162,7 +162,7 @@ public class AuthRepository : IAuthRepository
 
     public string ReCreateFirebaseToken(Account account, string uid)
     {
-        if (account.Owner == null)
+        if (account.Owner != null)
         {
             List<Claim> claims = new List<Claim>{
             new Claim(ClaimTypes.Name, account.Owner),
@@ -187,6 +187,9 @@ public class AuthRepository : IAuthRepository
 
             return jwt;
         }
-        throw new BadHttpRequestException("Fill all personal information");
+        else
+        {
+            throw new BadHttpRequestException("Fill all personal information");
+        }
     }
 }
