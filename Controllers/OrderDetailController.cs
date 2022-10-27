@@ -1,12 +1,14 @@
 using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[Authorize(Roles = "Customer")]
 public class OrderDetailController : ControllerBase
 {
     private readonly IOrderRepository _orderRepository;
