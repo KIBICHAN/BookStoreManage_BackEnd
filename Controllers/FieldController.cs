@@ -10,7 +10,6 @@ namespace BookStoreManage.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    // [AllowAnonymous]
     public class FieldController : ControllerBase
     {
         private readonly IFieldRepository _repository;
@@ -23,6 +22,7 @@ namespace BookStoreManage.Controllers
         }
 
         // GET: api/<FieldController>
+        [AllowAnonymous]
         [HttpGet("GetAll")]
         public async Task<ActionResult<List<Field>>> GetAlls()
         {
@@ -37,6 +37,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("Get5Row")]
         public ActionResult<List<Field>> GetFiveRows()
         {
@@ -52,6 +53,7 @@ namespace BookStoreManage.Controllers
         }
 
         // GET api/<FieldController>/5
+        [AllowAnonymous]
         [HttpGet("GetById/{id}")]
         public async Task<ActionResult<List<Field>>> GetByID(int id)
         {
@@ -66,6 +68,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("GetByName/{name}")]
         public async Task<ActionResult<List<Field>>> GetName(string name)
         {
@@ -81,6 +84,7 @@ namespace BookStoreManage.Controllers
         }
 
         // POST api/<FieldController>
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> Post(FieldDTO field)
         {
@@ -97,6 +101,7 @@ namespace BookStoreManage.Controllers
         }
 
         // PUT api/<FieldController>/5
+        [Authorize(Roles = "Admin")]
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> Put(int id, FieldDTO fields)
         {
@@ -112,6 +117,7 @@ namespace BookStoreManage.Controllers
         }
 
         // DELETE api/<FieldController>/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete(int id)
         {

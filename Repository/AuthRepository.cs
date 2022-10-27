@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using FirebaseAdmin.Auth;
 using Firebase.Auth;
+using System.Text.RegularExpressions;
 
 namespace BookStoreManage.Repository;
 
@@ -41,20 +42,33 @@ public class AuthRepository : IAuthRepository
         return _acc;
     }
 
+    private bool IsValidEmail(string email)
+    {
+        Regex emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", RegexOptions.IgnoreCase);
+        return emailRegex.IsMatch(email);
+    }
+
     public async Task Register(AuthDto account)
     {
-        CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
+        if (IsValidEmail(account.UserName))
+        {
+            CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-        _account = new Account();
-        Role role = new Role();
-        _account.UserName = account.UserName;
-        _account.PasswordHash = passwordHash;
-        _account.PasswordSalt = passwordSalt;
-        _account.Status = true;
-        _account.RoleID = 2;
+            _account = new Account();
 
-        _context.Accounts.Add(_account);
-        await _context.SaveChangesAsync();
+            _account.UserName = account.UserName;
+            _account.PasswordHash = passwordHash;
+            _account.PasswordSalt = passwordSalt;
+            _account.Status = true;
+            _account.RoleID = 2;
+
+            _context.Accounts.Add(_account);
+            await _context.SaveChangesAsync();
+        }
+        else
+        {
+            throw new BadHttpRequestException("Not valid email!");
+        }
     }
 
     public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
@@ -78,7 +92,8 @@ public class AuthRepository : IAuthRepository
     public string CreateToken(Account account)
     {
         List<Claim> claims = new List<Claim>{
-            new Claim(ClaimTypes.Name, account.UserName),
+            new Claim(ClaimTypes.Email, account.UserName),
+            new Claim(ClaimTypes.PostalCode, account.AccountID + ""),
             new Claim(ClaimTypes.Role, account.Role.RoleName)
         };
 
@@ -88,7 +103,7 @@ public class AuthRepository : IAuthRepository
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddDays(1),
+            expires: DateTime.Now.AddHours(1),
             signingCredentials: cred
         );
 
@@ -102,7 +117,7 @@ public class AuthRepository : IAuthRepository
         var refreshToken = new RefreshToken
         {
             Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-            Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddHours(7),
             Created = DateTime.Now
         };
         return refreshToken;
@@ -147,7 +162,9 @@ public class AuthRepository : IAuthRepository
 
     public string ReCreateFirebaseToken(Account account, string uid)
     {
-        List<Claim> claims = new List<Claim>{
+        if (account.Owner == null)
+        {
+            List<Claim> claims = new List<Claim>{
             new Claim(ClaimTypes.Name, account.Owner),
             new Claim(ClaimTypes.Email, account.UserName),
             new Claim(ClaimTypes.Uri, account.Image),
@@ -156,18 +173,20 @@ public class AuthRepository : IAuthRepository
             new Claim(ClaimTypes.GivenName, uid)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:TokenSecret").Value));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:TokenSecret").Value));
 
-        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-        var token = new JwtSecurityToken(
-            claims: claims,
-            expires: DateTime.Now.AddDays(1),
-            signingCredentials: cred
-        );
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials: cred
+            );
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
-        return jwt;
+            return jwt;
+        }
+        throw new BadHttpRequestException("Fill all personal information");
     }
 }
