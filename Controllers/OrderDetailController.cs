@@ -8,7 +8,7 @@ namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-// [Authorize(Roles = "Customer")]
+[Authorize(Roles = "Customer")]
 public class OrderDetailController : ControllerBase
 {
     private readonly IOrderRepository _orderRepository;

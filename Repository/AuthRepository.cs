@@ -165,9 +165,9 @@ public class AuthRepository : IAuthRepository
         if (account.Owner != null)
         {
             List<Claim> claims = new List<Claim>{
-            new Claim(ClaimTypes.Name, account.Owner),
+            //new Claim(ClaimTypes.Name, account.Owner),
             new Claim(ClaimTypes.Email, account.UserName),
-            new Claim(ClaimTypes.Uri, account.Image),
+            //new Claim(ClaimTypes.Uri, account.Image),
             new Claim(ClaimTypes.PostalCode, account.AccountID + ""),
             new Claim(ClaimTypes.Role, account.Role.RoleName),
             new Claim(ClaimTypes.GivenName, uid)
