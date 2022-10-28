@@ -11,8 +11,6 @@ namespace BookStoreManage.Repository
     {
         private static Field field = new Field();
         private static Random random = new Random();
-        private List<string> authorName = new List<string>();
-        private List<string> publisherName = new List<string>();
         private BookManageContext _context;
 
         public FieldRepository(BookManageContext context)
