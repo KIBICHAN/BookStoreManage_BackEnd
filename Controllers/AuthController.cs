@@ -102,7 +102,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [HttpPost("verify-access-token/{access-token}")]
+        [HttpPost("verify-access-token/{accessToken}")]
         public async Task<IActionResult> VerifyAccessToken(string accessToken)
         {
             try
