@@ -24,7 +24,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<List<Order>> FindByOrderID(int id)
     {
-        var order = await _context.Orders.Include(o => o.OrderDetails).Where(o => o.OrderID == id).ToListAsync();
+        var order = await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Book).Where(o => o.OrderID == id).ToListAsync();
         return order;
     }
 
