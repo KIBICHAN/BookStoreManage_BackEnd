@@ -105,7 +105,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<ActionResult<Account>> Register(AuthDto request)
+    public async Task<ActionResult<Account>> CreateAccount(CreateAccountDto request)
     {
         try
         {
