@@ -11,4 +11,5 @@ public interface IAccountRepository{
     Task DeleteAccount (int id);
     Task ChangeStatus(bool status, int id);
     string Base64Decode(string decodeStr);
+    string Base64Encode(string textStr);
 }

@@ -1,5 +1,6 @@
 #nullable disable
 using System.Text;
+using System.Text.RegularExpressions;
 using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
@@ -37,19 +38,16 @@ public class AccountRepository : IAccountRepository
     {
         var acc = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountID == id);
 
-        string email = Base64Encode(_account.AccountEmail);
         string phone = Base64Encode(_account.Phone);
         string address = Base64Encode(_account.AccountAddress);
-        // string _email = Base64Decode(email);
 
         acc.Owner = _account.Owner;
-        acc.AccountEmail = email;
         acc.Phone = phone;
         acc.AccountAddress = address;
         acc.Image = _account.Image;
         acc.Country = _account.Country;
         // acc.Status = _account.Status;
-        // acc.RoleID = _account.RoleID;
+        acc.RoleID = _account.RoleID;
 
         _context.Accounts.Update(acc);
         await _context.SaveChangesAsync();

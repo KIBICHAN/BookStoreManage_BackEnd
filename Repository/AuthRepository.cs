@@ -19,16 +19,19 @@ public class AuthRepository : IAuthRepository
     private Account _account;
     private readonly BookManageContext _context;
     private readonly IConfiguration _configuration;
-    public AuthRepository(BookManageContext context, IConfiguration configuration)
+    private readonly IAccountRepository _accountRepository;
+    public AuthRepository(BookManageContext context, IConfiguration configuration, IAccountRepository accountRepository)
     {
         _context = context;
         _configuration = configuration;
+        _accountRepository = accountRepository;
     }
 
     public async Task<Account> CheckLogin(AuthDto account)
     {
-        var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.UserName == account.UserName);
-        if (account.UserName == _acc.UserName)
+        string email = _accountRepository.Base64Encode(account.AccountEmail);
+        var _acc = await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.AccountEmail == email);
+        if (_acc != null)
         {
             if (!VerifyPasswordHash(account.Password, _acc.PasswordHash, _acc.PasswordSalt))
             {
@@ -48,19 +51,20 @@ public class AuthRepository : IAuthRepository
         return emailRegex.IsMatch(email);
     }
 
-    public async Task Register(AuthDto account)
+    public async Task Register(CreateAccountDto account)
     {
-        if (IsValidEmail(account.UserName))
+        if (IsValidEmail(account.AccountEmail))
         {
             CreatePasswordHash(account.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             _account = new Account();
+            string email = _accountRepository.Base64Encode(account.AccountEmail);
 
-            _account.UserName = account.UserName;
+            _account.AccountEmail = email;
             _account.PasswordHash = passwordHash;
             _account.PasswordSalt = passwordSalt;
             _account.Status = true;
-            _account.RoleID = 2;
+            _account.RoleID = account.RoleID;
 
             _context.Accounts.Add(_account);
             await _context.SaveChangesAsync();
@@ -92,7 +96,7 @@ public class AuthRepository : IAuthRepository
     public string CreateToken(Account account)
     {
         List<Claim> claims = new List<Claim>{
-            new Claim(ClaimTypes.Email, account.UserName),
+            new Claim(ClaimTypes.Email, account.AccountEmail),
             new Claim(ClaimTypes.PostalCode, account.AccountID + ""),
             new Claim(ClaimTypes.Role, account.Role.RoleName)
         };
@@ -150,13 +154,13 @@ public class AuthRepository : IAuthRepository
         var authenUser = new FirebaseAuthProvider(new FirebaseConfig(key));
         var authen = authenUser.GetUserAsync(idToken);
         User user = authen.Result;
-        var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.UserName == user.Email.ToLower()).FirstOrDefaultAsync();
+        var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.AccountEmail == user.Email.ToLower()).FirstOrDefaultAsync();
         if (tagetAccount == null)
         {
             return null;
         }
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
-        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.UserName, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
         return (jwtDto);
     }
 
@@ -166,7 +170,7 @@ public class AuthRepository : IAuthRepository
         {
             List<Claim> claims = new List<Claim>{
             //new Claim(ClaimTypes.Name, account.Owner),
-            new Claim(ClaimTypes.Email, account.UserName),
+            new Claim(ClaimTypes.Email, account.AccountEmail),
             //new Claim(ClaimTypes.Uri, account.Image),
             new Claim(ClaimTypes.PostalCode, account.AccountID + ""),
             new Claim(ClaimTypes.Role, account.Role.RoleName),
