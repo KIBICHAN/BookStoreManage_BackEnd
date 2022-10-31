@@ -84,7 +84,7 @@ namespace BookStoreManage.Controllers
         }
 
         // POST api/<FieldController>
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin"), Authorize(Roles = "Staff")]
         [HttpPost]
         public async Task<ActionResult> Post(FieldDTO field)
         {
@@ -101,7 +101,7 @@ namespace BookStoreManage.Controllers
         }
 
         // PUT api/<FieldController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin"), Authorize(Roles = "Staff")]
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> Put(int id, FieldDTO fields)
         {
@@ -117,7 +117,7 @@ namespace BookStoreManage.Controllers
         }
 
         // DELETE api/<FieldController>/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin"), Authorize(Roles = "Staff")]
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete(int id)
         {
