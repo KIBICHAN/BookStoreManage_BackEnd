@@ -21,19 +21,19 @@ namespace BookStoreManage.Controllers
             _context = context;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult<Account>> Register(AuthDto request)
-        {
-            try
-            {
-                await _authRepository.Register(request);
-                return Ok(_context.Accounts.ToList());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        // [HttpPost("register")]
+        // public async Task<ActionResult<Account>> Register(AuthDto request)
+        // {
+        //     try
+        //     {
+        //         await _authRepository.Register(request);
+        //         return Ok(_context.Accounts.ToList());
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return BadRequest(e.Message);
+        //     }
+        // }
 
         [HttpPost("login")]
         public async Task<ActionResult<Account>> Login(AuthDto request)
@@ -50,7 +50,10 @@ namespace BookStoreManage.Controllers
                 account.RefreshToken = setToken.RefreshToken;
                 account.TokenExpires = setToken.TokenExpires;
 
-                return Ok(token);
+                TokenDto dto = new TokenDto();
+                dto.Token = token;
+
+                return Ok(dto);
             }
             catch (Exception e)
             {
@@ -72,37 +75,40 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [HttpPost("refresh-token")]
-        public ActionResult<string> RefreshToken()
-        {
-            try
-            {
-                var refreshToken = Request.Cookies["refreshToken"];
-                if (account.RefreshToken.Equals(refreshToken))
-                {
-                    return Unauthorized("Invalid Refresh Token.");
-                }
-                else if (account.TokenExpires < DateTime.Now)
-                {
-                    return Unauthorized("Token expired.");
-                }
+        // [HttpPost("refresh-token")]
+        // public ActionResult<string> RefreshToken()
+        // {
+        //     try
+        //     {
+        //         var refreshToken = Request.Cookies["refreshToken"];
+        //         if (account.RefreshToken.Equals(refreshToken))
+        //         {
+        //             return Unauthorized("Invalid Refresh Token.");
+        //         }
+        //         else if (account.TokenExpires < DateTime.Now)
+        //         {
+        //             return Unauthorized("Token expired.");
+        //         }
 
-                string token = _authRepository.CreateToken(account);
-                var newRefreshToken = _authRepository.GenerateRefreshToken();
-                var setToken = _authRepository.SetRefreshToken(newRefreshToken, Response);
+        //         string token = _authRepository.CreateToken(account);
+        //         var newRefreshToken = _authRepository.GenerateRefreshToken();
+        //         var setToken = _authRepository.SetRefreshToken(newRefreshToken, Response);
 
-                account.RefreshToken = setToken.RefreshToken;
-                account.TokenExpires = setToken.TokenExpires;
+        //         account.RefreshToken = setToken.RefreshToken;
+        //         account.TokenExpires = setToken.TokenExpires;
 
-                return Ok(token);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        //         TokenDto dto = new TokenDto();
+        //         dto.Token = token;
 
-        [HttpPost("verify-access-token")]
+        //         return Ok(dto);
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         return BadRequest(e.Message);
+        //     }
+        // }
+
+        [HttpPost("verify-access-token/{accessToken}")]
         public async Task<IActionResult> VerifyAccessToken(string accessToken)
         {
             try

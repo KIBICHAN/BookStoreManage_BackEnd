@@ -5,7 +5,7 @@ namespace BookStoreManage.IRepository;
 
 public interface IAuthRepository{
     Task<Account> CheckLogin(AuthDto account);
-    Task Register(AuthDto account);
+    Task Register(CreateAccountDto account);
     string CreateToken(Account account);
     RefreshToken GenerateRefreshToken();
     Account SetRefreshToken(RefreshToken newRefreshToken, HttpResponse response);

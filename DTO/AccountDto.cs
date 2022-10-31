@@ -11,5 +11,5 @@ public class AccountDto{
     public string Image {get; set;}
     public string Country {get; set;}
     // public bool Status {get; set;}
-    // public int RoleID {get; set;}
+    public int RoleID {get; set;}
 }

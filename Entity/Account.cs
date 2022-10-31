@@ -13,9 +13,9 @@ namespace BookStoreManage.Entity
         [MaxLength(100)]
         // [Required(ErrorMessage = "Enter Account Name")]
         public string Owner { get; set; }
-        [MaxLength(100)]
-        [Required(ErrorMessage = "Enter User Name")]
-        public string UserName { get; set; }
+        [MaxLength(200)]
+        [Required(ErrorMessage = "Enter Account Email")]
+        public string AccountEmail { get; set; }
         [MaxLength(1024)]
         [Required]
         [Column(TypeName = "varbinary(1024)")]
@@ -27,9 +27,6 @@ namespace BookStoreManage.Entity
         // [MaxLength(100)]
         // [Required(ErrorMessage = "Enter Password")]
         // public string Password { get; set; }
-        [MaxLength(200)]
-        // [Required(ErrorMessage = "Enter Account Email")]
-        public string AccountEmail { get; set; }
         [MaxLength(20)]
         // [Required(ErrorMessage = "Enter Account Phone")]
         public string Phone { get; set; }

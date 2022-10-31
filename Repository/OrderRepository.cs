@@ -24,7 +24,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<List<Order>> FindByOrderID(int id)
     {
-        var order = await _context.Orders.Include(o => o.OrderDetails).Where(o => o.OrderID == id).ToListAsync();
+        var order = await _context.Orders.Include(o => o.OrderDetails).ThenInclude(od => od.Book).Where(o => o.OrderID == id).ToListAsync();
         return order;
     }
 
@@ -84,14 +84,16 @@ public class OrderRepository : IOrderRepository
 
     public async Task CreateNewOrderDetail(List<OrderDetailDto> _list)
     {
-        for (int i = 0; i < _list.Count; i++)
+        double total = 0;
+
+        try
         {
-            var _order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == _list[i].OrderID);
-            if (_order.TotalAmount == 0)
+            for (int i = 0; i < _list.Count; i++)
             {
-                double total = 0;
-                detail = new OrderDetail();
+                var _order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == _list[i].OrderID);
                 var _book = await _context.Books.FirstOrDefaultAsync(b => b.BookID == _list[i].BookID);
+
+                detail = new OrderDetail();
 
                 detail.OrderID = _list[i].OrderID;
                 detail.BookID = _list[i].BookID;
@@ -107,13 +109,14 @@ public class OrderRepository : IOrderRepository
                 _context.Books.Update(_book);
                 _order.TotalAmount = total;
                 _context.Orders.Update(_order);
-            }
-            else
-            {
-                Console.WriteLine("Can't");
+
+                await _context.SaveChangesAsync();
             }
         }
-        await _context.SaveChangesAsync();
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
     }
 
     public async Task DeleteOrder(int id)
