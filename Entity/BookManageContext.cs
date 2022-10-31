@@ -2,8 +2,6 @@
 using System.Security.Cryptography;
 using System.Text;
 using BookStoreManage.DTO;
-using BookStoreManage.IRepository;
-using BookStoreManage.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookStoreManage.Entity
@@ -34,85 +32,36 @@ namespace BookStoreManage.Entity
         {
             base.OnModelCreating(modelBuilder);
             //Hàm này để ép dữ liệu mặc định
-            this.SeedAccountsCus(modelBuilder);
-            this.SeedAccountsCus1(modelBuilder);
-            this.SeedAccountsCus2(modelBuilder);
-            this.SeedAccountAdmin(modelBuilder);
-            this.SeedAccountStaff(modelBuilder);
+            this.SeedAccounts(modelBuilder);
             this.SeedRoles(modelBuilder);
         }
 
-        private void SeedAccountsCus(ModelBuilder builder)
+        private void SeedAccounts(ModelBuilder builder)
         {
-            CreatePasswordHash("abc", out byte[] passwordHash, out byte[] passwordSalt);
-            Base64Encode("tthanhtung92@gmail.com", out string strEncode);
-            Account account = new Account()
-            {
-                AccountID = 1,
-                AccountEmail = strEncode,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                RoleID = 2
+            List<CreateAccountDto> list = new List<CreateAccountDto>(){
+                new CreateAccountDto{AccountEmail="tthanhtung92@gmail.com",Password="abc",RoleID=2},
+                new CreateAccountDto{AccountEmail="tungttse140963@fpt.edu.vn",Password="abc",RoleID=2},
+                new CreateAccountDto{AccountEmail="hoangnhse140184@fpt.edu.vn",Password="abc",RoleID=2},
+                new CreateAccountDto{AccountEmail="admin",Password="admin",RoleID=1},
+                new CreateAccountDto{AccountEmail="staff",Password="staff",RoleID=3},
             };
-            builder.Entity<Account>().HasData(account);
-        }
-        private void SeedAccountsCus1(ModelBuilder builder)
-        {
-            CreatePasswordHash("abc", out byte[] passwordHash, out byte[] passwordSalt);
-            Base64Encode("tungttse140963@fpt.edu.vn", out string strEncode);
-            Account account = new Account()
+            int i = 0;
+            foreach (CreateAccountDto dto in list)
             {
-                AccountID = 2,
-                AccountEmail = strEncode,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                RoleID = 2
-            };
-            builder.Entity<Account>().HasData(account);
-        }
-        private void SeedAccountsCus2(ModelBuilder builder)
-        {
-            CreatePasswordHash("abc", out byte[] passwordHash, out byte[] passwordSalt);
-            Base64Encode("hoangnhse140184@fpt.edu.vn", out string strEncode);
-            Account account = new Account()
-            {
-                AccountID = 3,
-                AccountEmail = strEncode,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                RoleID = 2
-            };
-            builder.Entity<Account>().HasData(account);
-        }
-
-       
-        private void SeedAccountAdmin(ModelBuilder builder)
-        {
-            CreatePasswordHash("123", out byte[] passwordHash, out byte[] passwordSalt);
-            Base64Encode("admin", out string strEncode);
-            Account account = new Account()
-            {
-                AccountID = 4,
-                AccountEmail = strEncode,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                RoleID = 1
-            };
-            builder.Entity<Account>().HasData(account);
-        }
-        private void SeedAccountStaff(ModelBuilder builder)
-        {
-            CreatePasswordHash("123", out byte[] passwordHash, out byte[] passwordSalt);
-            Base64Encode("staff", out string strEncode);
-            Account account = new Account()
-            {
-                AccountID = 5,
-                AccountEmail = strEncode,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt,
-                RoleID = 3
-            };
-            builder.Entity<Account>().HasData(account);
+                Base64Encode(list[i].AccountEmail, out string strEncode);
+                CreatePasswordHash(list[i].Password, out byte[] passwordHash, out byte[] passwordSalt);
+                Account account = new Account()
+                {
+                    AccountID = i + 1,
+                    AccountEmail = strEncode,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt,
+                    Status = true,
+                    RoleID = list[i].RoleID
+                };
+                builder.Entity<Account>().HasData(account);
+                i++;
+            }
         }
 
         private void SeedRoles(ModelBuilder builder)
