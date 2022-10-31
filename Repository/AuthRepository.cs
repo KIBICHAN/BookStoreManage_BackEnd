@@ -154,7 +154,8 @@ public class AuthRepository : IAuthRepository
         var authenUser = new FirebaseAuthProvider(new FirebaseConfig(key));
         var authen = authenUser.GetUserAsync(idToken);
         User user = authen.Result;
-        var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.AccountEmail == user.Email.ToLower()).FirstOrDefaultAsync();
+        string email = _accountRepository.Base64Encode(user.Email.ToLower());
+        var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.AccountEmail == email).FirstOrDefaultAsync();
         if (tagetAccount == null)
         {
             return null;
@@ -166,7 +167,7 @@ public class AuthRepository : IAuthRepository
 
     public string ReCreateFirebaseToken(Account account, string uid)
     {
-        if (account.Owner != null)
+        if (account.AccountEmail != null)
         {
             List<Claim> claims = new List<Claim>{
             //new Claim(ClaimTypes.Name, account.Owner),
