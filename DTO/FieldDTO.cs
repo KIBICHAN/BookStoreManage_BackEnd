@@ -3,7 +3,7 @@ namespace BookStoreManage.DTO
 {
     public class FieldDTO
     {
-        public string name { get; set; }
-        public string description { get; set; }
+        public string FieldName { get; set; }
+        public string FieldDescription { get; set; }
     }
 }

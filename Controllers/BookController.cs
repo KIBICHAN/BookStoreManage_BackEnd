@@ -167,5 +167,35 @@ namespace BookStoreManage.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("NumberOfAcc")]
+        public ActionResult NumberOfSAcc()
+        {
+            try
+            {
+                int count = _repository.NumberOfAcc();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("NumberOfMoney")]
+        public ActionResult NumberOfMoney()
+        {
+            try
+            {
+                double count = _repository.NumberOfMoney();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
     }
 }
