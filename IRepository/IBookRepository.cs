@@ -17,6 +17,10 @@ namespace BookStoreManage.IRepository
 
         int NumberOfSold();
 
+        int NumberOfAcc();
+
+        double NumberOfMoney();
+
         //Task<List<Book>> getBookByField(int fieldID);
     }
 }

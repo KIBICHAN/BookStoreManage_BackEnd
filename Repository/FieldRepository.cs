@@ -20,8 +20,8 @@ namespace BookStoreManage.Repository
         public async Task CreateField(FieldDTO _field)
         {
             field = new Field();
-            field.FieldName = _field.name;
-            field.FieldDescription = _field.description;
+            field.FieldName = _field.FieldName;
+            field.FieldDescription = _field.FieldDescription;
 
             _context.Add(field);
             await _context.SaveChangesAsync();
@@ -43,8 +43,8 @@ namespace BookStoreManage.Repository
             var tmp = _context.Fields.Find(idField);
             if (tmp != null)
             {
-                tmp.FieldName = fields.name;
-                tmp.FieldDescription = fields.description;
+                tmp.FieldName = fields.FieldName;
+                tmp.FieldDescription = fields.FieldDescription;
                 _context.Update(tmp);
                 await _context.SaveChangesAsync();
             }
