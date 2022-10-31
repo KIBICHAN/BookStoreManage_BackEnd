@@ -163,5 +163,17 @@ namespace BookStoreManage.Repository
             int count = _context.OrderDetails.Sum(od => od.Quantity);
             return count;
         }
+
+        public int NumberOfAcc()
+        {
+            int count = _context.Accounts.Count();
+            return count;
+        }
+
+        public double NumberOfMoney()
+        {
+            double count = _context.Orders.Sum(or => or.TotalAmount);
+            return count;
+        }
     }
 }
