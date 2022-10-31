@@ -58,7 +58,7 @@ namespace BookStoreManage.Controllers
                 dto.AccountEmail = _accountRepository.Base64Decode(acc.AccountEmail);;
                 dto.Owner = acc.Owner;
                 dto.Image = acc.Image;
-                dto.RoleID = acc.RoleID;
+                dto.Role = acc.Role.RoleName;
 
                 return Ok(dto);
             }
@@ -133,7 +133,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [HttpGet("authen"), Authorize(Roles = "Staff"), Authorize(Roles = "Admin")]
+        [HttpGet("authen"), Authorize(Roles = "Admin,Staff")]
         public ActionResult<Account> Authen()
         {
             return Ok(_context.Accounts.ToList());

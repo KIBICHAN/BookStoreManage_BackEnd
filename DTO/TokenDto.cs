@@ -7,5 +7,5 @@ public class TokenDto
     public string Owner { get; set; }
     public string Token { get; set; }
     public string Image { get; set; }
-    public int RoleID { get; set; }
+    public string Role { get; set; }
 }
