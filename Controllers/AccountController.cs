@@ -9,7 +9,6 @@ namespace BookStoreManage.Controllers;
 [Route("[controller]")]
 [ApiController]
 [Authorize(Roles = "Admin")]
-[Authorize]
 public class AccountController : ControllerBase
 {
     private readonly IAccountRepository _accountRepository;
