@@ -39,9 +39,9 @@ namespace BookStoreManage.Entity
         private void SeedAccounts(ModelBuilder builder)
         {
             List<CreateAccountDto> list = new List<CreateAccountDto>(){
-                new CreateAccountDto{AccountEmail="tthanhtung92@gmail.com",Password="abc",RoleID=2},
-                new CreateAccountDto{AccountEmail="tungttse140963@fpt.edu.vn",Password="abc",RoleID=2},
-                new CreateAccountDto{AccountEmail="hoangnhse140184@fpt.edu.vn",Password="abc",RoleID=2},
+                new CreateAccountDto{AccountEmail="tthanhtung92@gmail.com",Password="",RoleID=2},
+                new CreateAccountDto{AccountEmail="tungttse140963@fpt.edu.vn",Password="",RoleID=2},
+                new CreateAccountDto{AccountEmail="hoangnhse140184@fpt.edu.vn",Password="",RoleID=2},
                 new CreateAccountDto{AccountEmail="admin",Password="admin",RoleID=1},
                 new CreateAccountDto{AccountEmail="staff",Password="staff",RoleID=3},
             };

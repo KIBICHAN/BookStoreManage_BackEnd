@@ -121,11 +121,11 @@ namespace BookStoreManage.Controllers
             try
             {
                 var result = await _authRepository.AuthenFirebase(accessToken);
-                if (result != null)
+                if (result == null)
                 {
-                    return Ok(result);
+                    return Ok("Create Google Account Successfully!");
                 }
-                return Unauthorized("Account not valid!");
+                return Ok(result);
             }
             catch (Exception e)
             {
