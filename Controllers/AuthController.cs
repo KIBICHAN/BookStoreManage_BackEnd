@@ -14,9 +14,11 @@ namespace BookStoreManage.Controllers
     {
         private static Account account = new Account();
         private readonly IAuthRepository _authRepository;
+        private readonly IAccountRepository _accountRepository;
         private readonly BookManageContext _context;
-        public AuthController(IAuthRepository authRepository, BookManageContext context)
+        public AuthController(IAuthRepository authRepository, IAccountRepository accountRepository, BookManageContext context)
         {
+            _accountRepository = accountRepository;
             _authRepository = authRepository;
             _context = context;
         }
@@ -51,7 +53,12 @@ namespace BookStoreManage.Controllers
                 account.TokenExpires = setToken.TokenExpires;
 
                 TokenDto dto = new TokenDto();
+                
                 dto.Token = token;
+                dto.AccountEmail = _accountRepository.Base64Decode(acc.AccountEmail);;
+                dto.Owner = acc.Owner;
+                dto.Image = acc.Image;
+                dto.Role = acc.Role.RoleName;
 
                 return Ok(dto);
             }
@@ -126,7 +133,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [HttpGet("authen"), Authorize(Roles = "Staff"), Authorize(Roles = "Admin")]
+        [HttpGet("authen"), Authorize(Roles = "Admin,Staff")]
         public ActionResult<Account> Authen()
         {
             return Ok(_context.Accounts.ToList());
