@@ -68,13 +68,13 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [HttpPost("logout"), Authorize]
-        public ActionResult Logout()
+        [HttpPost("logout"), Authorize(Roles = "Admin,Customer,Staff")]
+        public ActionResult Logout(string token)
         {
             try
             {
-                account = null;
-                return Ok();
+                token = "";
+                return Ok(token);
             }
             catch (Exception e)
             {
