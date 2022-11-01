@@ -68,7 +68,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-       [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPost("Create")]
         public async Task<ActionResult> CreateNewBook(BookDTO bookDTO)
         {
@@ -84,7 +84,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-       [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> UpdateBook(int id, BookDTO bookDTO)
         {
@@ -99,7 +99,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-       [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> DeleteBook(int id)
         {
@@ -115,7 +115,8 @@ namespace BookStoreManage.Controllers
         }
 
         [HttpGet("GetNewestBook")]
-        public async Task<ActionResult<List<Book>>> GetNewestBook(){
+        public async Task<ActionResult<List<Book>>> GetNewestBook()
+        {
             try
             {
                 var list = await _repository.GetNewestBook();
@@ -127,7 +128,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-       [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPost("Import")]
         public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file)
         {
@@ -151,7 +152,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-       [Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpGet("NumberOfBook")]
         public ActionResult NumberOfBook()
         {
