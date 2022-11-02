@@ -38,12 +38,27 @@ namespace BookStoreManage.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("Get5Row")]
-        public ActionResult<List<Field>> GetFiveRows()
+        [HttpGet("GetEightRow")]
+        public ActionResult<List<Field>> GetEightRows()
         {
             try
             {
-                var list = _repository.getFiveRows();
+                var list = _repository.GetEightRows();
+                return Ok(list);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetTwoRow")]
+        public ActionResult<List<Field>> GetTwoRows()
+        {
+            try
+            {
+                var list = _repository.GetTwoRows();
                 return Ok(list);
             }
             catch (Exception e)
@@ -84,7 +99,7 @@ namespace BookStoreManage.Controllers
         }
 
         // POST api/<FieldController>
-        [Authorize(Roles = "Admin"), Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPost]
         public async Task<ActionResult> Post(FieldDTO field)
         {
@@ -101,7 +116,7 @@ namespace BookStoreManage.Controllers
         }
 
         // PUT api/<FieldController>/5
-        [Authorize(Roles = "Admin"), Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> Put(int id, FieldDTO fields)
         {
@@ -117,7 +132,7 @@ namespace BookStoreManage.Controllers
         }
 
         // DELETE api/<FieldController>/5
-        [Authorize(Roles = "Admin"), Authorize(Roles = "Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete(int id)
         {

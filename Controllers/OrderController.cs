@@ -88,7 +88,8 @@ public class OrderController : ControllerBase
     }
 
     [HttpDelete("Delete/{id}")]
-    public async Task<ActionResult> DeleteOrder(int id){
+    public async Task<ActionResult> DeleteOrder(int id)
+    {
         try
         {
             await _orderRepository.DeleteOrder(id);

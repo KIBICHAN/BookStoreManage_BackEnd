@@ -11,6 +11,10 @@ using System.IdentityModel.Tokens.Jwt;
 using FirebaseAdmin.Auth;
 using Firebase.Auth;
 using System.Text.RegularExpressions;
+using MimeKit;
+using MimeKit.Text;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 
 namespace BookStoreManage.Repository;
 
@@ -158,6 +162,19 @@ public class AuthRepository : IAuthRepository
         var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.AccountEmail == email).FirstOrDefaultAsync();
         if (tagetAccount == null)
         {
+            string url = "https://booklyyy.netlify.app";
+            CreateAccountDto createAccountDto = new CreateAccountDto(){
+                AccountEmail = user.Email.ToLower(),
+                Password = "",
+                RoleID = 2
+            };
+            await Register(createAccountDto);
+            EmailDto emailDto = new EmailDto(){
+                To = user.Email,
+                Subject = "Welcome to Bookly!",
+                Body = "<i>Don't Click This Link !!!</i> " + " <a href=" + url + ">link</a>",
+            };
+            SendConfirmGoogleSignInEmail(emailDto);
             return null;
         }
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
@@ -196,5 +213,21 @@ public class AuthRepository : IAuthRepository
         {
             throw new BadHttpRequestException("Fill all personal information");
         }
+    }
+
+    public void SendConfirmGoogleSignInEmail(EmailDto request){
+        var email = new MimeMessage();
+        email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUserName").Value));
+        email.To.Add(MailboxAddress.Parse(request.To));
+        email.Subject = request.Subject;
+        email.Body = new TextPart(TextFormat.Html){
+            Text = request.Body
+        };
+
+        using var smtp = new SmtpClient();
+        smtp.Connect(_configuration.GetSection("EmailHost").Value, 587, SecureSocketOptions.StartTls);
+        smtp.Authenticate(_configuration.GetSection("EmailUserName").Value, _configuration.GetSection("EmailPassword").Value);
+        smtp.Send(email);
+        smtp.Disconnect(true);
     }
 }

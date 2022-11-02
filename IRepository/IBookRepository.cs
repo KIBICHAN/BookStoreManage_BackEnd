@@ -12,6 +12,7 @@ namespace BookStoreManage.IRepository
         Task<List<Book>> getAllBook();
         Task<List<Book>> getByID(int bookID);
         Task<List<Book>> getByName(string bookName);
+        Task<List<Book>> GetNewestBook();
         Task<List<BookDTO>> ImportExcel(IFormFile file);
 
         int totalNumberOfBook();
