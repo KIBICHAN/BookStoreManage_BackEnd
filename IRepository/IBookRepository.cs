@@ -1,5 +1,6 @@
 ﻿using BookStoreManage.DTO;
 using BookStoreManage.Entity;
+using System.Collections;
 
 namespace BookStoreManage.IRepository
 {
@@ -23,6 +24,9 @@ namespace BookStoreManage.IRepository
 
         //Task<List<Book>> getBookByField(int fieldID);
 
-        Task<List<OrderDetail>> getSixBookBestSeller();
+        Task<List<Book>> getSixBookBestSeller();
+
+
+
     }
 }
