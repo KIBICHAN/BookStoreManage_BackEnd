@@ -84,6 +84,21 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        //[Authorize(Roles = "Customer")]
+        [HttpGet("SixBookBestSeller")]
+        public async Task<ActionResult<List<Book>>> getSixBookBestSeller()
+        {
+            try
+            {
+                var result = await _repository.getSixBookBestSeller();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [Authorize(Roles = "Admin,Staff")]
         [HttpPut("Update/{id}")]
         public async Task<ActionResult> UpdateBook(int id, BookDTO bookDTO)
