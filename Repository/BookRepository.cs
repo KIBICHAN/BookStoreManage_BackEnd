@@ -1,9 +1,7 @@
 ﻿#nullable disable
-using System.Net;
 using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 
@@ -40,12 +38,16 @@ namespace BookStoreManage.Repository
         public async Task DeleteBook(int BookID)
         {
             var tmp = _context.Books.Find(BookID);
-            if (tmp != null)
+            var check = _context.OrderDetails.Where(b => b.BookID == BookID).FirstOrDefault();
+            if (check != null)
             {
-                _context.Books.Remove(tmp);
-                await _context.SaveChangesAsync();
+                throw new BadHttpRequestException("Có thằng nào đó order rồi, xóa sao mà được");
             }
+            _context.Books.Remove(tmp);
+            await _context.SaveChangesAsync();
         }
+
+
 
         public async Task EditBook(int bookID, BookDTO bookDTO)
         {
@@ -188,7 +190,7 @@ namespace BookStoreManage.Repository
 
         public int NumberOfAcc()
         {
-            int count = _context.Accounts.Count();
+            int count = _context.Accounts.Count(b => b.RoleID == 2);
             return count;
         }
 
@@ -197,5 +199,18 @@ namespace BookStoreManage.Repository
             double count = _context.Orders.Sum(or => or.TotalAmount);
             return count;
         }
+
+        
+
+        public async Task<List<OrderDetail>> getSixBookBestSeller()
+        {
+            var rankOrderDetail = await _context.OrderDetails
+                .Include(b => b.Book)
+                .OrderByDescending(or => or.Quantity)
+                .Take(6)            // lấy 6 sản phẩm 
+                .ToListAsync();
+            return rankOrderDetail;
+        }
+
     }
 }
