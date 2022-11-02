@@ -178,16 +178,17 @@ namespace BookStoreManage.Repository
             return count;
         }
 
+        
+
         public async Task<List<OrderDetail>> getSixBookBestSeller()
         {
             var rankOrderDetail = await _context.OrderDetails
                 .Include(b => b.Book)
                 .OrderByDescending(or => or.Quantity)
-                //.GroupBy(or => or.BookID)
+                .Take(6)            // lấy 6 sản phẩm 
                 .ToListAsync();
-            //var rankOrderDetail = await _context.OrderDetails.Distinct().Sum(or => or.Quantity);
-
             return rankOrderDetail;
         }
+
     }
 }
