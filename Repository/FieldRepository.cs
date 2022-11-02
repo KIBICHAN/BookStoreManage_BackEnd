@@ -86,7 +86,7 @@ namespace BookStoreManage.Repository
         {
             int count = countField();
 
-            IEnumerable<Field> field = _context.Fields.OfType<Field>().Include(f => f.Books).ToList().Skip(random.Next(1, count) - 2).Take(2);
+            IEnumerable<Field> field = _context.Fields.OfType<Field>().Include(f => f.Books).ThenInclude(b => b.Author).ToList().Skip(random.Next(1, count) - 2).Take(2);
             return field;
         }
 

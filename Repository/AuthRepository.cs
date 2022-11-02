@@ -170,7 +170,7 @@ public class AuthRepository : IAuthRepository
             };
             await Register(createAccountDto);
             EmailDto emailDto = new EmailDto(){
-                To = "dungpmse141059@fpt.edu.vn",
+                To = user.Email,
                 Subject = "Welcome to Bookly!",
                 Body = "<i>Don't Click This Link !!!</i> " + " <a href=" + url + ">link</a>",
             };
