@@ -76,9 +76,16 @@ namespace BookStoreManage.Repository
             return book;
         }
 
+        public async Task<List<Book>> getByName(string bookName)
+        {
+            var books = await _context.Books.Where(b => b.BookName.Contains(bookName)).ToListAsync();
+            //ToListAsync();
+            return books;
+        }
+
         public async Task<List<Book>> getByID(int idBook)
         {
-            var book = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Where(b => b.BookID == idBook).Select(b => new Book
+            var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Where(b => b.BookID == idBook).Select(b => new Book
             {
                 StripeID = b.StripeID,
                 BookID = b.BookID,
@@ -91,13 +98,28 @@ namespace BookStoreManage.Repository
                 Author = b.Author,
                 Publisher = b.Publisher
             }).ToListAsync();
-            return book;
+            return books;
         }
 
-        public async Task<List<Book>> getByName(string bookName)
+        public async Task<List<Book>> GetNewestBook()
         {
-            var books = await _context.Books.Where(b => b.BookName.Contains(bookName)).ToListAsync();
-            //ToListAsync();
+            DateTime currentDate = DateTime.UtcNow.Date;
+            DateTime oneWeek = DateTime.UtcNow.Date.AddDays(-30);
+            
+            var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher)
+            .Where(b => b.DateOfPublished.CompareTo(currentDate) < 0 && b.DateOfPublished.CompareTo(oneWeek) > 0).Select(b => new Book
+            {
+                StripeID = b.StripeID,
+                BookID = b.BookID,
+                BookName = b.BookName,
+                Price = b.Price,
+                Quantity = b.Quantity,
+                Image = b.Image,
+                Description = b.Description,
+                DateOfPublished = b.DateOfPublished,
+                Author = b.Author,
+                Publisher = b.Publisher
+            }).ToListAsync();
             return books;
         }
 

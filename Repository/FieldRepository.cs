@@ -74,11 +74,19 @@ namespace BookStoreManage.Repository
             return field;
         }
 
-        public IEnumerable<Field> getFiveRows()
+        public IEnumerable<Field> GetEightRows()
         {
             int count = countField();
 
-            IEnumerable<Field> field = _context.Fields.OfType<Field>().Include(f => f.Books).ToList().Skip(random.Next(1, count) - 5).Take(5);
+            IEnumerable<Field> field = _context.Fields.OfType<Field>().Include(f => f.Books).ToList().Skip(random.Next(1, count) - 8).Take(8);
+            return field;
+        }
+
+        public IEnumerable<Field> GetTwoRows()
+        {
+            int count = countField();
+
+            IEnumerable<Field> field = _context.Fields.OfType<Field>().Include(f => f.Books).ThenInclude(b => b.Author).ToList().Skip(random.Next(1, count) - 2).Take(2);
             return field;
         }
 
