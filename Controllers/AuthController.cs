@@ -123,7 +123,7 @@ namespace BookStoreManage.Controllers
                 var result = await _authRepository.AuthenFirebase(accessToken);
                 if (result == null)
                 {
-                    return Ok("Create Google Account Successfully!");
+                    return BadRequest("Fail somewhere!");
                 }
                 return Ok(result);
             }
