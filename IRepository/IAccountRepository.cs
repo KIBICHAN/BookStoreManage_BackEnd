@@ -5,7 +5,8 @@ namespace BookStoreManage.IRepository;
 
 public interface IAccountRepository{
     Task<List<Account>> GetAll();
-    Task<List<Account>> GetName(string name);
+    Task<List<Account>> GetByName(string name);
+    Task<List<Account>> GetByRole(int roleId);
     Task<Account> FindByID(int id);
     Task EditAccount (AccountDto _account, int id);
     Task DeleteAccount (int id);
