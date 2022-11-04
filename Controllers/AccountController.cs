@@ -53,7 +53,36 @@ public class AccountController : ControllerBase
     {
         try
         {
-            var list = await _accountRepository.GetName(name);
+            var list = await _accountRepository.GetByName(name);
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].AccountAddress != null)
+                {
+                    list[i].AccountAddress = _accountRepository.Base64Decode(list[i].AccountAddress);
+                }
+                if (list[i].Phone != null)
+                {
+                    list[i].Phone = _accountRepository.Base64Decode(list[i].Phone);
+                }
+                if (list[i].AccountEmail != null)
+                {
+                    list[i].AccountEmail = _accountRepository.Base64Decode(list[i].AccountEmail);
+                }
+            }
+            return Ok(list);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    [HttpGet("GetByRole/{roleId}")]
+    public async Task<ActionResult<List<Account>>> GetByRole(int roleId)
+    {
+        try
+        {
+            var list = await _accountRepository.GetByRole(roleId);
             for (int i = 0; i < list.Count; i++)
             {
                 if (list[i].AccountAddress != null)
