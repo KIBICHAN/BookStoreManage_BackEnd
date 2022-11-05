@@ -158,24 +158,35 @@ public class AuthRepository : IAuthRepository
         var authenUser = new FirebaseAuthProvider(new FirebaseConfig(key));
         var authen = authenUser.GetUserAsync(idToken);
         User user = authen.Result;
-        string email = _accountRepository.Base64Encode(user.Email.ToLower());
-        var tagetAccount = await _context.Accounts.Include(a => a.Role).Where(a => a.AccountEmail == email).FirstOrDefaultAsync();
+        var tagetAccount = await _context.Accounts.Include(a => a.Role)
+        .Where(a => a.AccountEmail == _accountRepository.Base64Encode(user.Email.ToLower()))
+        .FirstOrDefaultAsync();
         if (tagetAccount == null)
         {
-            string url = "https://booklyyy.netlify.app";
-            CreateAccountDto createAccountDto = new CreateAccountDto(){
+            CreateAccountDto createAccountDto = new CreateAccountDto()
+            {
                 AccountEmail = user.Email.ToLower(),
                 Password = "",
                 RoleID = 2
             };
             await Register(createAccountDto);
-            EmailDto emailDto = new EmailDto(){
-                To = user.Email,
-                Subject = "Welcome to Bookly!",
-                Body = "<i>Don't Click This Link !!!</i> " + " <a href=" + url + ">link</a>",
-            };
-            SendConfirmGoogleSignInEmail(emailDto);
-            return null;
+            var _tagetAccount = await _context.Accounts.Include(a => a.Role)
+            .Where(a => a.AccountEmail == _accountRepository.Base64Encode(user.Email.ToLower()))
+            .FirstOrDefaultAsync();
+            if (_tagetAccount != null)
+            {
+                string url = "http://localhost:3000/";
+                jwt = ReCreateFirebaseToken(_tagetAccount, uid);
+                jwtDto = new JWTDto(_tagetAccount.AccountID, _tagetAccount.AccountEmail, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
+                EmailDto emailDto = new EmailDto()
+                {
+                    To = user.Email,
+                    Subject = "Chào mừng đến với Bookly!",
+                    Body = "<i>Nhấn vào đường link này để trở về trang chủ!!!</i> " + " <a href=" + url + ">link</a>",
+                };
+                SendConfirmGoogleSignInEmail(emailDto);
+                return (jwtDto);
+            }
         }
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
         jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
@@ -215,12 +226,14 @@ public class AuthRepository : IAuthRepository
         }
     }
 
-    public void SendConfirmGoogleSignInEmail(EmailDto request){
+    public void SendConfirmGoogleSignInEmail(EmailDto request)
+    {
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailUserName").Value));
         email.To.Add(MailboxAddress.Parse(request.To));
         email.Subject = request.Subject;
-        email.Body = new TextPart(TextFormat.Html){
+        email.Body = new TextPart(TextFormat.Html)
+        {
             Text = request.Body
         };
 

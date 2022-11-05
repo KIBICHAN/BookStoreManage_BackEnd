@@ -22,7 +22,7 @@ public class AccountRepository : IAccountRepository
         return accountList;
     }
 
-    public async Task<List<Account>> GetName(string name)
+    public async Task<List<Account>> GetByName(string name)
     {
         var nameList = await _context.Accounts.Where(a => a.Owner.Trim().ToLower().Contains(name.Trim().ToLower())).Include(a => a.Orders).ToListAsync();
         return nameList;
@@ -31,6 +31,11 @@ public class AccountRepository : IAccountRepository
     public async Task<Account> FindByID(int id)
     {
         var account = await _context.Accounts.Include(a => a.Orders).FirstOrDefaultAsync(a => a.AccountID == id);
+        return account;
+    }
+
+    public async Task<List<Account>> GetByRole(int roleId){
+        var account = await _context.Accounts.Where(a => a.RoleID == roleId).Include(a => a.Orders).ToListAsync();
         return account;
     }
 

@@ -56,21 +56,36 @@ namespace BookStoreManage.Repository
             return field;
         }
 
-        // public List<Field> getByIDTest(int idField)
-        // {
-        //     var field = from f in _context.Fields
-        //                 join b in _context.Books on f.FieldID equals b.FieldID
-        //                 join a in _context.Authors on b.AuthorID equals a.AuthorID
-        //                 join p in _context.Publishers on b.PublisherID equals p.PublisherID into newTable
-        //                 select newTable.ToList();
-        //     return field;
-        // }
-
         public async Task<List<Field>> getByID(int idField)
         {
-            var field = await _context.Fields
-            .Include(f => f.Books).ThenInclude(b => b.Author)
-            .Where(f => f.FieldID == idField).ToListAsync();
+            List<Book> book = _context.Books.Where(b => b.FieldID == idField)
+            .Join(_context.Authors, b => b.AuthorID, a => a.AuthorID, (b, a) => new { b, a })
+            .Select(b => new Book
+            {
+                BookID = b.b.BookID,
+                StripeID = b.b.StripeID,
+                BookName = b.b.BookName,
+                Price = b.b.Price,
+                Quantity = b.b.Quantity,
+                Image = b.b.Image,
+                Description = b.b.Description,
+                DateOfPublished = b.b.DateOfPublished,
+                Author = new Author
+                {
+                    AuthorID = b.a.AuthorID,
+                    AuthorName = b.a.AuthorName
+                }
+            }).ToList();
+
+            var field = await _context.Fields.Where(f => f.FieldID == idField)
+            .Select(f => new Field
+            {
+                FieldID = f.FieldID,
+                FieldName = f.FieldName,
+                FieldDescription = f.FieldDescription,
+                Books = book
+            }).ToListAsync();
+
             return field;
         }
 
@@ -86,7 +101,31 @@ namespace BookStoreManage.Repository
         {
             int count = countField();
 
-            IEnumerable<Field> field = _context.Fields.OfType<Field>().Include(f => f.Books).ThenInclude(b => b.Author).ToList().Skip(random.Next(1, count) - 2).Take(2);
+            var field = _context.Fields.Select(f => new Field
+            {
+                FieldID = f.FieldID,
+                FieldName = f.FieldName,
+                FieldDescription = f.FieldDescription,
+                Books = _context.Books.Where(b => b.FieldID == f.FieldID)
+                    .Join(_context.Authors, b => b.AuthorID, a => a.AuthorID, (b, a) => new { b, a })
+                    .Select(b => new Book
+                    {
+                        BookID = b.b.BookID,
+                        StripeID = b.b.StripeID,
+                        BookName = b.b.BookName,
+                        Price = b.b.Price,
+                        Quantity = b.b.Quantity,
+                        Image = b.b.Image,
+                        Description = b.b.Description,
+                        DateOfPublished = b.b.DateOfPublished,
+                        Author = new Author
+                        {
+                            AuthorID = b.a.AuthorID,
+                            AuthorName = b.a.AuthorName
+                        }
+                    }).ToList()
+            }).ToList().Skip(random.Next(1, count) - 2).Take(2);
+
             return field;
         }
 
