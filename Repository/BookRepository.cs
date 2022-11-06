@@ -4,6 +4,8 @@ using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace BookStoreManage.Repository
 {
@@ -200,16 +202,57 @@ namespace BookStoreManage.Repository
             return count;
         }
 
-        
-
-        public async Task<List<OrderDetail>> getSixBookBestSeller()
+        public async Task<ArrayList> sumquantity()
         {
-            var rankOrderDetail = await _context.OrderDetails
-                .Include(b => b.Book)
-                .OrderByDescending(or => or.Quantity)
-                .Take(6)            // lấy 6 sản phẩm 
-                .ToListAsync();
-            return rankOrderDetail;
+            //ArrayList<SumDTO> list = new ArrayList<SumDTO>;
+
+            var list = new ArrayList();
+            SumDTO aoMaThat = new SumDTO();
+
+            var getIDBook = await _context.OrderDetails.Select(or => or.BookID).Distinct().ToListAsync();
+            for (int j = 0; j < getIDBook.Count(); j++)
+            {
+                var check = await _context.OrderDetails.Where(or => or.BookID.Equals(getIDBook[j])).ToListAsync();
+
+
+                int tmp = 0;
+                int sum = 0;
+                int bookID = 0;
+                for (int i = 0; i < check.Count(); i++)
+                {
+                    bookID = check[i].BookID;
+                    tmp = check[i].Quantity;
+                    sum += tmp;
+
+                    aoMaThat = new SumDTO();
+                    aoMaThat.bookID = bookID;
+                    aoMaThat.quantity = sum;
+                }
+                list.Add(aoMaThat);
+
+            }
+
+            return list;
+        }
+
+
+        public async Task<List<Book>> getSixBookBestSeller()
+        {
+            var rankBooks = await sumquantity();
+            var list = new List<Book>();
+            List<SumDTO> array = rankBooks.OfType<SumDTO>().ToList();    
+
+            array.Sort((a, b) => b.quantity.CompareTo(a.quantity));
+
+            for(int i = 0; i < 6; i++)
+            {
+                var aoMaThat = await _context.Books.FindAsync(array[i].bookID);
+
+                list.Add(aoMaThat);
+            }
+            
+            return list;
+            
         }
 
     }
