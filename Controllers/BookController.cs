@@ -86,7 +86,7 @@ namespace BookStoreManage.Controllers
 
         //[Authorize(Roles = "Customer")]
         [HttpGet("SixBookBestSeller")]
-        public async Task<ActionResult> getSixBookBestSeller()
+        public async Task<ActionResult<List<Book>>> getSixBookBestSeller()
         {
             try
             {
