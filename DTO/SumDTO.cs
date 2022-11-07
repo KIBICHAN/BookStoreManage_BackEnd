@@ -1,4 +1,4 @@
-﻿namespace BookStoreManage.DTO
+namespace BookStoreManage.DTO
 {
     public class SumDTO
     {

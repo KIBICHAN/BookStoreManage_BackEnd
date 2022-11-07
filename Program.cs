@@ -13,7 +13,7 @@ using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.137.198"), 7132));
+//builder.WebHost.ConfigureKestrel(options => options.Listen(System.Net.IPAddress.Parse("192.168.137.71"), 7132));
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -34,11 +34,11 @@ builder.Services.AddSwaggerGen(
         options.OperationFilter<SecurityRequirementsOperationFilter>();
     });
 
-/*FirebaseApp.Create(new AppOptions()
+FirebaseApp.Create(new AppOptions()
 {
     Credential = GoogleCredential.FromFile("D:\\Swp391\\BookStoreManage\\firebaseconfig.json"),
     ProjectId = "book-store-management-abf1d",
-});   */  
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -63,7 +63,7 @@ builder.Services.AddDbContext<BookManageContext>(options =>
 
 builder.Services.AddCors(p => p.AddPolicy("MyCors", build =>
 {
-    //build.WithOrigins("https://localhost:7091");
+    // build.WithOrigins("https://localhost:7091");
     build.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
 

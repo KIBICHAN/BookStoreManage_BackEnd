@@ -1,6 +1,5 @@
 ﻿using BookStoreManage.DTO;
 using BookStoreManage.Entity;
-using System.Collections;
 
 namespace BookStoreManage.IRepository
 {
@@ -14,20 +13,11 @@ namespace BookStoreManage.IRepository
         Task<List<Book>> getByName(string bookName);
         Task<List<Book>> GetNewestBook();
         Task<List<BookDTO>> ImportExcel(IFormFile file);
-
         int totalNumberOfBook();
-
         int NumberOfSold();
-
         int NumberOfAcc();
-
         double NumberOfMoney();
-
         //Task<List<Book>> getBookByField(int fieldID);
-
         Task<List<Book>> getSixBookBestSeller();
-
-
-
     }
 }
