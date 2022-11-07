@@ -67,6 +67,8 @@ public class AuthRepository : IAuthRepository
             _account.AccountEmail = email;
             _account.PasswordHash = passwordHash;
             _account.PasswordSalt = passwordSalt;
+            _account.Owner = account.Owner;
+            _account.Image = account.Image;
             _account.Status = true;
             _account.RoleID = account.RoleID;
 
@@ -167,6 +169,8 @@ public class AuthRepository : IAuthRepository
             {
                 AccountEmail = user.Email.ToLower(),
                 Password = "",
+                Owner = user.FirstName + user.LastName,
+                Image = user.PhotoUrl,
                 RoleID = 2
             };
             await Register(createAccountDto);
