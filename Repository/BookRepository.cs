@@ -1,11 +1,10 @@
 ﻿#nullable disable
+using System.Collections;
 using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace BookStoreManage.Repository
 {
@@ -107,7 +106,7 @@ namespace BookStoreManage.Repository
         {
             DateTime currentDate = DateTime.UtcNow.Date;
             DateTime oneWeek = DateTime.UtcNow.Date.AddDays(-30);
-            
+
             var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher)
             .Where(b => b.DateOfPublished.CompareTo(currentDate) < 0 && b.DateOfPublished.CompareTo(oneWeek) > 0).Select(b => new Book
             {
@@ -228,7 +227,6 @@ namespace BookStoreManage.Repository
             {
                 var check = await _context.OrderDetails.Where(or => or.BookID.Equals(getIDBook[j])).ToListAsync();
 
-
                 int tmp = 0;
                 int sum = 0;
                 int bookID = 0;
@@ -243,31 +241,26 @@ namespace BookStoreManage.Repository
                     aoMaThat.quantity = sum;
                 }
                 list.Add(aoMaThat);
-
             }
-
             return list;
         }
-
 
         public async Task<List<Book>> getSixBookBestSeller()
         {
             var rankBooks = await sumquantity();
-            var list = new List<Book>();
-            List<SumDTO> array = rankBooks.OfType<SumDTO>().ToList();    
+            List<Book> list = new List<Book>();
+            List<SumDTO> array = rankBooks.OfType<SumDTO>().ToList();
 
             array.Sort((a, b) => b.quantity.CompareTo(a.quantity));
 
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
-                var aoMaThat = await _context.Books.FindAsync(array[i].bookID);
+                var aoMaThat = await _context.Books.Include(b => b.Author).Where(b => b.BookID == array[i].bookID).FirstOrDefaultAsync();
 
                 list.Add(aoMaThat);
             }
-            
-            return list;
-            
-        }
 
+            return list;
+        }
     }
 }
