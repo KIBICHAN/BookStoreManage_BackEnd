@@ -67,6 +67,11 @@ public class AuthRepository : IAuthRepository
             _account.AccountEmail = email;
             _account.PasswordHash = passwordHash;
             _account.PasswordSalt = passwordSalt;
+            _account.Country = account.Country;
+            _account.Owner = account.Owner;
+            _account.Image = account.Image;
+            _account.AccountAddress = account.AccountAddress;
+            _account.Phone = account.Phone;
             _account.Status = true;
             _account.RoleID = account.RoleID;
 

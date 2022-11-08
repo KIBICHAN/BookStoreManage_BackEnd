@@ -202,6 +202,20 @@ namespace BookStoreManage.Repository
             return count;
         }
 
+        public int NumberOfOrder()
+        {
+            int count = _context.Orders.Count();
+            return count;
+        }
+
+        public int NumberOfBookName()
+        {
+            int count = _context.Books.Count();
+            return count;
+
+        }
+
+
         public async Task<ArrayList> sumquantity()
         {
             //ArrayList<SumDTO> list = new ArrayList<SumDTO>;

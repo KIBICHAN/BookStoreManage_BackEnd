@@ -68,6 +68,125 @@ namespace BookStoreManage.Controllers
             }
         }
 
+        [HttpGet("GetNewestBook")]
+        public async Task<ActionResult<List<Book>>> GetNewestBook()
+        {
+            try
+            {
+                var list = await _repository.GetNewestBook();
+                return Ok(list);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Customer")]
+        [HttpGet("SixBookBestSeller")]
+        public async Task<ActionResult> getSixBookBestSeller()
+        {
+            try
+            {
+                var result = await _repository.getSixBookBestSeller();
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        //[Authorize(Roles = "Admin,Staff")]
+        [HttpGet("TotalOfBook")]
+        public ActionResult NumberOfBook()
+        {
+            try
+            {
+                int count = _repository.totalNumberOfBook();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet("NumberOfSold")]
+        public ActionResult NumberOfSold()
+        {
+            try
+            {
+                int count = _repository.NumberOfSold();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet("NumberOfAcc")]
+        public ActionResult NumberOfSAcc()
+        {
+            try
+            {
+                int count = _repository.NumberOfAcc();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        //[Authorize(Roles = "Admin,Staff")]
+        [HttpGet("NumberOfMoney")]
+        public ActionResult NumberOfMoney()
+        {
+            try
+            {
+                double count = _repository.NumberOfMoney();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet("NumberOfOrder")]
+        public ActionResult NumberOfOrder()
+        {
+            try
+            {
+                int count = _repository.NumberOfOrder();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet("NumberOfBookName")]
+        public ActionResult NumberOfBookName()
+        {
+            try
+            {
+                int count = _repository.NumberOfBookName();
+                return Ok(count);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [Authorize(Roles = "Admin,Staff")]
         [HttpPost("Create")]
         public async Task<ActionResult> CreateNewBook(BookDTO bookDTO)
@@ -84,14 +203,23 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        //[Authorize(Roles = "Customer")]
-        [HttpGet("SixBookBestSeller")]
-        public async Task<ActionResult> getSixBookBestSeller()
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpPost("Import")]
+        public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file)
         {
             try
             {
-                var result = await _repository.getSixBookBestSeller();
-                return Ok(result);
+                var list = await _repository.ImportExcel(file);
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var listname = await _repository.getByName(list[i].bookName);
+                    if (listname.Count == 0)
+                    {
+                        await _repository.CreateBook(list[i]);
+                    }
+                    //return StatusCode(StatusCodes.Status500InternalServerError, "Can't insert Book Name: " + list[i].bookName);
+                }
+                return Ok(_context.Books.ToList());
             }
             catch (Exception e)
             {
@@ -129,102 +257,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [HttpGet("GetNewestBook")]
-        public async Task<ActionResult<List<Book>>> GetNewestBook()
-        {
-            try
-            {
-                var list = await _repository.GetNewestBook();
-                return Ok(list);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
+        
 
-        [Authorize(Roles = "Admin,Staff")]
-        [HttpPost("Import")]
-        public async Task<ActionResult<List<Book>>> ImportFile(IFormFile file)
-        {
-            try
-            {
-                var list = await _repository.ImportExcel(file);
-                for (int i = 0; i < list.Count; i++)
-                {
-                    var listname = await _repository.getByName(list[i].bookName);
-                    if (listname.Count == 0)
-                    {
-                        await _repository.CreateBook(list[i]);
-                    }
-                    //return StatusCode(StatusCodes.Status500InternalServerError, "Can't insert Book Name: " + list[i].bookName);
-                }
-                return Ok(_context.Books.ToList());
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        [Authorize(Roles = "Admin,Staff")]
-        [HttpGet("NumberOfBook")]
-        public ActionResult NumberOfBook()
-        {
-            try
-            {
-                int count = _repository.totalNumberOfBook();
-                return Ok(count);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        // [Authorize(Roles = "Admin")]
-        [HttpGet("NumberOfSold")]
-        public ActionResult NumberOfSold()
-        {
-            try
-            {
-                int count = _repository.NumberOfSold();
-                return Ok(count);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        // [Authorize(Roles = "Admin")]
-        [HttpGet("NumberOfAcc")]
-        public ActionResult NumberOfSAcc()
-        {
-            try
-            {
-                int count = _repository.NumberOfAcc();
-                return Ok(count);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
-
-        // [Authorize(Roles = "Admin")]
-        [HttpGet("NumberOfMoney")]
-        public ActionResult NumberOfMoney()
-        {
-            try
-            {
-                double count = _repository.NumberOfMoney();
-                return Ok(count);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
-        }
     }
 }

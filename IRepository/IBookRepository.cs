@@ -23,6 +23,10 @@ namespace BookStoreManage.IRepository
 
         double NumberOfMoney();
 
+        int NumberOfOrder();
+
+        int NumberOfBookName();
+
         //Task<List<Book>> getBookByField(int fieldID);
 
         Task<List<Book>> getSixBookBestSeller();
