@@ -34,11 +34,11 @@ builder.Services.AddSwaggerGen(
         options.OperationFilter<SecurityRequirementsOperationFilter>();
     });
 
-/*FirebaseApp.Create(new AppOptions()
+FirebaseApp.Create(new AppOptions()
 {
     Credential = GoogleCredential.FromFile("D:\\Swp391\\BookStoreManage\\firebaseconfig.json"),
     ProjectId = "book-store-management-abf1d",
-});   */  
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
