@@ -44,9 +44,11 @@ public class AccountRepository : IAccountRepository
         var acc = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountID == id);
 
         string phone = Base64Encode(_account.Phone);
+        string email = Base64Decode(_account.AccountEmail);
         string address = Base64Encode(_account.AccountAddress);
 
         acc.Owner = _account.Owner;
+        acc.AccountEmail = email;
         acc.Phone = phone;
         acc.AccountAddress = address;
         acc.Image = _account.Image;
