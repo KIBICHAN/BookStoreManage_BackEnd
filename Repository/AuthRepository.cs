@@ -44,7 +44,11 @@ public class AuthRepository : IAuthRepository
         }
         else
         {
-            throw new BadHttpRequestException("No!");
+            throw new BadHttpRequestException("Email is not valid!");
+        }
+        if (_acc.Status == false)
+        {
+            throw new BadHttpRequestException("Your account have been block!");
         }
         return _acc;
     }
@@ -191,6 +195,9 @@ public class AuthRepository : IAuthRepository
                 SendConfirmGoogleSignInEmail(emailDto);
                 return (jwtDto);
             }
+        }
+        if(tagetAccount.Status == false){
+            throw new BadHttpRequestException("Your account have been block!");
         }
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
         jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
