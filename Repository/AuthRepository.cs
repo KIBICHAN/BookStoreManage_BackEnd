@@ -183,16 +183,16 @@ public class AuthRepository : IAuthRepository
             .FirstOrDefaultAsync();
             if (_tagetAccount != null)
             {
-                string url = "http://localhost:3000/";
+                // string url = "http://localhost:3000/";
                 jwt = ReCreateFirebaseToken(_tagetAccount, uid);
                 jwtDto = new JWTDto(_tagetAccount.AccountID, _tagetAccount.AccountEmail, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
-                EmailDto emailDto = new EmailDto()
-                {
-                    To = user.Email,
-                    Subject = "Chào mừng đến với Bookly!",
-                    Body = "<i>Nhấn vào đường link này để trở về trang chủ!!!</i> " + " <a href=" + url + ">link</a>",
-                };
-                SendConfirmGoogleSignInEmail(emailDto);
+                // EmailDto emailDto = new EmailDto()
+                // {
+                //     To = user.Email,
+                //     Subject = "Chào mừng đến với Bookly!",
+                //     Body = "<i>Nhấn vào đường link này để trở về trang chủ!!!</i> " + " <a href=" + url + ">link</a>",
+                // };
+                // SendConfirmGoogleSignInEmail(emailDto);
                 return (jwtDto);
             }
         }
@@ -200,7 +200,7 @@ public class AuthRepository : IAuthRepository
             throw new BadHttpRequestException("Your account have been block!");
         }
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
-        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, false, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
         return (jwtDto);
     }
 
