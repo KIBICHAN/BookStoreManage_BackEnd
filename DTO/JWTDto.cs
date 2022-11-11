@@ -3,8 +3,9 @@ namespace BookStoreManage.DTO;
 
 public class JWTDto
 {
-    public JWTDto(int accountId, string email, bool email_verified, string name, string picture, string jwt, string role)
+    public JWTDto(int accountId, string email, bool email_verified, bool is_new_user, string name, string picture, string jwt, string role)
     {
+        this.is_new_user = is_new_user;
         this.accountId = accountId;
         this.email = email;
         this.email_verified = email_verified;
@@ -17,6 +18,7 @@ public class JWTDto
     public int accountId { get; set; }
     public string email { get; set; }
     public bool email_verified { get; set; }
+    public bool  is_new_user {get; set;}
     public string name { get; set; }
     public string picture { get; set; }
     public string jwt { get; set; }

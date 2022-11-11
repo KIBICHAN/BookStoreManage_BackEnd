@@ -185,7 +185,7 @@ public class AuthRepository : IAuthRepository
             {
                 // string url = "http://localhost:3000/";
                 jwt = ReCreateFirebaseToken(_tagetAccount, uid);
-                jwtDto = new JWTDto(_tagetAccount.AccountID, _tagetAccount.AccountEmail, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
+                jwtDto = new JWTDto(_tagetAccount.AccountID, _tagetAccount.AccountEmail, true, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
                 // EmailDto emailDto = new EmailDto()
                 // {
                 //     To = user.Email,
@@ -200,7 +200,7 @@ public class AuthRepository : IAuthRepository
             throw new BadHttpRequestException("Your account have been block!");
         }
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
-        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, false, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, false, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
         return (jwtDto);
     }
 
