@@ -86,7 +86,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getByID(int idBook)
         {
-            var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Where(b => b.BookID == idBook).Select(b => new Book
+            var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Field).Where(b => b.BookID == idBook).Select(b => new Book
             {
                 StripeID = b.StripeID,
                 BookID = b.BookID,
@@ -96,6 +96,7 @@ namespace BookStoreManage.Repository
                 Image = b.Image,
                 Description = b.Description,
                 DateOfPublished = b.DateOfPublished,
+                Field = b.Field,
                 Author = b.Author,
                 Publisher = b.Publisher
             }).ToListAsync();
