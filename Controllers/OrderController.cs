@@ -7,7 +7,6 @@ namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-[Authorize(Roles = "Customer")]
 public class OrderController : ControllerBase
 {
     private readonly IOrderRepository _orderRepository;
@@ -16,6 +15,7 @@ public class OrderController : ControllerBase
         _orderRepository = orderRepository;
     }
 
+    [Authorize(Roles = "Staff")]
     [HttpGet("Get")]
     public async Task<ActionResult<List<Order>>> GetAll()
     {
@@ -30,6 +30,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpGet("GetByOrderId/{id}")]
     public async Task<ActionResult<List<Order>>> GetOrder(int id)
     {
@@ -44,6 +45,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpGet("GetByCustomerId/{id}")]
     public async Task<ActionResult<List<Order>>> GetOrderByCustomer(int id)
     {
@@ -58,6 +60,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpPost("Create/{accountId}")]
     public async Task<ActionResult> CreateNew(int accountId)
     {
@@ -72,6 +75,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpPut("UpdateStatus/{id}")]
     public async Task<ActionResult> UpdateStatus(int id, bool status)
     {
@@ -86,6 +90,7 @@ public class OrderController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Customer")]
     [HttpDelete("Delete/{id}")]
     public async Task<ActionResult> DeleteOrder(int id)
     {
