@@ -9,5 +9,5 @@ public interface IAuthRepository{
     string CreateToken(Account account);
     RefreshToken GenerateRefreshToken();
     Account SetRefreshToken(RefreshToken newRefreshToken, HttpResponse response);
-    Task<JWTDto> AuthenFirebase(string idToken);
+    Task<JWTDto> AuthenFirebase(bool isNewUser, string idToken);
 }   

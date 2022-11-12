@@ -53,9 +53,9 @@ namespace BookStoreManage.Controllers
                 account.TokenExpires = setToken.TokenExpires;
 
                 TokenDto dto = new TokenDto();
-                
+
                 dto.Token = token;
-                dto.AccountEmail = _accountRepository.Base64Decode(acc.AccountEmail);;
+                dto.AccountEmail = _accountRepository.Base64Decode(acc.AccountEmail); ;
                 dto.Owner = acc.Owner;
                 dto.Image = acc.Image;
                 dto.Role = acc.Role.RoleName;
@@ -120,12 +120,35 @@ namespace BookStoreManage.Controllers
         {
             try
             {
-                var result = await _authRepository.AuthenFirebase(accessToken);
+                bool isNewUser = false;
+                var result = await _authRepository.AuthenFirebase(isNewUser, accessToken);
                 if (result == null)
                 {
-                    return BadRequest("Fail somewhere!");
+                    return Ok("Please verify your email first!");
                 }
                 return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("email-verify/{verify}&{accessToken}")]
+        public async Task<IActionResult> EmailVerify(bool verify, string accessToken)
+        {
+            try
+            {
+                if (verify == true)
+                {
+                    bool isNewUser = true;
+                    var result = await _authRepository.AuthenFirebase(isNewUser, accessToken);
+                    if (result == null)
+                    {
+                        return Ok("OK");
+                    }
+                }
+                return Ok("Fail to verify!");
             }
             catch (Exception e)
             {
