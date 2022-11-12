@@ -124,7 +124,11 @@ namespace BookStoreManage.Controllers
                 var result = await _authRepository.AuthenFirebase(isNewUser, accessToken);
                 if (result == null)
                 {
-                    return Ok("Please verify your email first!");
+                    var message = new MessageDto(){
+                        Message = "Please verify your email!",
+                        isNewUser = true
+                    };
+                    return Ok(message);
                 }
                 return Ok(result);
             }

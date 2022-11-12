@@ -80,7 +80,8 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
+        [AllowAnonymous]
         [HttpGet("SixBookBestSeller")]
         public async Task<ActionResult> getSixBookBestSeller()
         {
@@ -95,7 +96,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpGet("TotalOfBook")]
         public ActionResult NumberOfBook()
         {
@@ -110,7 +111,8 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,Staff")]
+        //[Authorize(Roles = "Admin,Staff")]
+        [AllowAnonymous]
         [HttpGet("NumberOfSold")]
         public ActionResult NumberOfSold()
         {
