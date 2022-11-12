@@ -67,11 +67,11 @@ public class AccountRepository : IAccountRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task ChangeStatus(bool status, int id)
+    public async Task ChangeStatus(int id, ChangeStatusDto status)
     {
         var acc = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountID == id);
 
-        acc.Status = status;
+        acc.Status = status.Status;
 
         _context.Accounts.Update(acc);
         await _context.SaveChangesAsync();
