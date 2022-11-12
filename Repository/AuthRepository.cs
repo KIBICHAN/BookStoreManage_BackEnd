@@ -190,16 +190,6 @@ public class AuthRepository : IAuthRepository
                 };
                 await Register(createAccountDto);
                 return null;
-                // var _tagetAccount = await _context.Accounts.Include(a => a.Role)
-                // .Where(a => a.AccountEmail == _accountRepository.Base64Encode(user.Email.ToLower()))
-                // .FirstOrDefaultAsync();
-                // if (_tagetAccount != null)
-                // {
-                //     String _email = _accountRepository.Base64Decode(_tagetAccount.AccountEmail);
-                //     jwt = ReCreateFirebaseToken(_tagetAccount, uid);
-                //     jwtDto = new JWTDto(_tagetAccount.AccountID, _email, true, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
-                //     return (jwtDto);
-                // }
             }else{
                 return null;
             }
@@ -210,7 +200,7 @@ public class AuthRepository : IAuthRepository
         }
         String email = _accountRepository.Base64Decode(tagetAccount.AccountEmail);
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
-        jwtDto = new JWTDto(tagetAccount.AccountID, email, true, false, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        jwtDto = new JWTDto(tagetAccount.AccountID, email, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
         return (jwtDto);
     }
 
