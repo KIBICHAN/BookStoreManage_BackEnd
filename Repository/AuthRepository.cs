@@ -154,7 +154,7 @@ public class AuthRepository : IAuthRepository
         return _account;
     }
 
-    public async Task<JWTDto> AuthenFirebase(string idToken)
+    public async Task<JWTDto> AuthenFirebase(bool isNewUser, string idToken)
     {
         string key = "AIzaSyAwB1GD5SLBrIMuOjp6DrOUhNGjkUKPUz0";
         string jwt = "";
@@ -169,38 +169,48 @@ public class AuthRepository : IAuthRepository
         .FirstOrDefaultAsync();
         if (tagetAccount == null)
         {
-            CreateAccountDto createAccountDto = new CreateAccountDto()
+            string url = "https://localhost:7091/Auth/email-verify/true&"+idToken+"";
+            EmailDto emailDto = new EmailDto()
             {
-                AccountEmail = user.Email.ToLower(),
-                Password = "",
-                Owner = user.FirstName + user.LastName,
-                Image = user.PhotoUrl,
-                RoleID = 2
+                To = user.Email,
+                Subject = "Chào mừng đến với Bookly :D",
+                Body = "<p>Nhấn vào đường link để xác thực rằng bạn đã đăng kí tài khoàn Bookly với tài khoản Google của bạn</p> " + 
+                        "<p><a href=" + url + ">Xác thực ở đây!!!</a></p>",
             };
-            await Register(createAccountDto);
-            var _tagetAccount = await _context.Accounts.Include(a => a.Role)
-            .Where(a => a.AccountEmail == _accountRepository.Base64Encode(user.Email.ToLower()))
-            .FirstOrDefaultAsync();
-            if (_tagetAccount != null)
+            SendConfirmGoogleSignInEmail(emailDto);
+            if (isNewUser == true)
             {
-                // string url = "http://localhost:3000/";
-                jwt = ReCreateFirebaseToken(_tagetAccount, uid);
-                jwtDto = new JWTDto(_tagetAccount.AccountID, _tagetAccount.AccountEmail, true, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
-                // EmailDto emailDto = new EmailDto()
+                CreateAccountDto createAccountDto = new CreateAccountDto()
+                {
+                    AccountEmail = user.Email.ToLower(),
+                    Password = "",
+                    Owner = user.DisplayName,
+                    Image = user.PhotoUrl,
+                    RoleID = 2
+                };
+                await Register(createAccountDto);
+                return null;
+                // var _tagetAccount = await _context.Accounts.Include(a => a.Role)
+                // .Where(a => a.AccountEmail == _accountRepository.Base64Encode(user.Email.ToLower()))
+                // .FirstOrDefaultAsync();
+                // if (_tagetAccount != null)
                 // {
-                //     To = user.Email,
-                //     Subject = "Chào mừng đến với Bookly!",
-                //     Body = "<i>Nhấn vào đường link này để trở về trang chủ!!!</i> " + " <a href=" + url + ">link</a>",
-                // };
-                // SendConfirmGoogleSignInEmail(emailDto);
-                return (jwtDto);
+                //     String _email = _accountRepository.Base64Decode(_tagetAccount.AccountEmail);
+                //     jwt = ReCreateFirebaseToken(_tagetAccount, uid);
+                //     jwtDto = new JWTDto(_tagetAccount.AccountID, _email, true, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
+                //     return (jwtDto);
+                // }
+            }else{
+                return null;
             }
         }
-        if(tagetAccount.Status == false){
+        if (tagetAccount.Status == false)
+        {
             throw new BadHttpRequestException("Your account have been block!");
         }
+        String email = _accountRepository.Base64Decode(tagetAccount.AccountEmail);
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
-        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, false, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        jwtDto = new JWTDto(tagetAccount.AccountID, email, true, false, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
         return (jwtDto);
     }
 
