@@ -160,12 +160,12 @@ public class AccountController : ControllerBase
         }
     }
 
-    [HttpPut("ChangeStatus/{id}")]
-    public async Task<ActionResult> ChangeStatus(int id, bool status)
+    [HttpPut("ChangeStatus")]
+    public async Task<ActionResult> ChangeStatus(int id, ChangeStatusDto status)
     {
         try
         {
-            await _accountRepository.ChangeStatus(status, id);
+            await _accountRepository.ChangeStatus(id, status);
             return Ok();
         }
         catch (Exception e)

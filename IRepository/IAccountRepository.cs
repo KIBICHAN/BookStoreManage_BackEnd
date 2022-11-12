@@ -10,7 +10,7 @@ public interface IAccountRepository{
     Task<Account> FindByID(int id);
     Task EditAccount (AccountDto _account, int id);
     Task DeleteAccount (int id);
-    Task ChangeStatus(bool status, int id);
+    Task ChangeStatus(int id, ChangeStatusDto status);
     string Base64Decode(string decodeStr);
     string Base64Encode(string textStr);
 }
