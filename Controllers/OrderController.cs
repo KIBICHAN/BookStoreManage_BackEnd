@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
-[Authorize(Roles = "Staff,Admin,Staff")]
+[Authorize(Roles = "Customer,Admin,Staff")]
 [ApiController]
 public class OrderController : ControllerBase
 {
