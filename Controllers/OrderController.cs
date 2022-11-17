@@ -1,3 +1,4 @@
+using BookStoreManage.DTO;
 using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.AspNetCore.Authorization;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
-[Authorize(Roles = "Customer,Admin,Staff")]
+//[Authorize(Roles = "Customer,Admin,Staff")]
 [ApiController]
 public class OrderController : ControllerBase
 {
@@ -73,7 +74,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut("UpdateStatus/{id}")]
-    public async Task<ActionResult> UpdateStatus(int id, bool status)
+    public async Task<ActionResult> UpdateStatus(int id, ChangeStatusDto status)
     {
         try
         {
