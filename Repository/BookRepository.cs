@@ -73,7 +73,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getAllBook()
         {
-            var book = await _context.Books.ToListAsync();
+            var book = await _context.Books.Include(b => b.OrderDetails).ToListAsync();
             return book;
         }
 
