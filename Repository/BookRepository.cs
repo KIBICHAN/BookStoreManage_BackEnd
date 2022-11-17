@@ -193,7 +193,7 @@ namespace BookStoreManage.Repository
 
         public int NumberOfSold()
         {
-            int count = _context.OrderDetails.Sum(od => od.Quantity);
+            int count = _context.OrderDetails.Where(ors => ors.Order.OrderStatus == true).Sum(od => od.Quantity);
             return count;
         }
 
