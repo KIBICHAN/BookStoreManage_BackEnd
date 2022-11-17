@@ -143,22 +143,24 @@ namespace BookStoreManage.Repository
                             try
                             {
                                 int fieldId, authorId, publisherId = 0;
-                                string fieldName = worksheet.Cells[row, 6].Value.ToString();
+                                string fieldName, authorName, publisherName;
+
+                                fieldName = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString();
                                 fieldId = _context.Fields.Where(f => f.FieldName.Trim().Contains(fieldName.Trim())).Select(f => f.FieldID).FirstOrDefault();
-                                string authorName = worksheet.Cells[row, 7].Value.ToString();
+                                authorName = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString();
                                 authorId = _context.Authors.Where(a => a.AuthorName.Trim().Contains(authorName.Trim())).Select(a => a.AuthorID).FirstOrDefault();
-                                string publisherName = worksheet.Cells[row, 8].Value.ToString();
+                                publisherName = worksheet.Cells[row, 8].Value == null ? "" : worksheet.Cells[row, 8].Value.ToString();
                                 publisherId = _context.Publishers.Where(p => p.PublisherName.Trim().Contains(publisherName.Trim())).Select(p => p.PublisherID).FirstOrDefault();
                                 
                                 if (fieldId > 0 || authorId > 0 || publisherId > 0)
                                 {
                                     list.Add(new BookDTO
                                     {
-                                        bookName = worksheet.Cells[row, 1].Value.ToString(),
-                                        price = double.Parse(worksheet.Cells[row, 2].Value.ToString()),
-                                        quantity = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
-                                        image = worksheet.Cells[row, 4].Value.ToString(),
-                                        description = worksheet.Cells[row, 5].Value.ToString(),
+                                        bookName = worksheet.Cells[row, 1].Value == null ? "" : worksheet.Cells[row, 1].Value.ToString(),
+                                        price = double.Parse(worksheet.Cells[row, 2].Value == null ? "0" : worksheet.Cells[row, 2].Value.ToString()),
+                                        quantity = Int32.Parse(worksheet.Cells[row, 3].Value == null ? "0" : worksheet.Cells[row, 3].Value.ToString()),
+                                        image = worksheet.Cells[row, 4].Value  == null ? "" : worksheet.Cells[row, 4].Value.ToString(),
+                                        description = worksheet.Cells[row, 5].Value == null ? "" : worksheet.Cells[row, 5].Value.ToString(),
                                         fieldID = fieldId,
                                         publisherID = publisherId,
                                         authorID = authorId,
