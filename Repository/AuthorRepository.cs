@@ -44,7 +44,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Author>> getAllAuthor()
         {
-            var list = await _context.Authors.ToListAsync();
+            var list = await _context.Authors.Include(a => a.Books).ToListAsync();
             return list;
         }
 
