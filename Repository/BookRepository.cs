@@ -142,17 +142,16 @@ namespace BookStoreManage.Repository
                         {
                             try
                             {
-                                int fieldId, authorId, publisherId = 0;
                                 string fieldName, authorName, publisherName;
 
                                 fieldName = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString();
-                                fieldId = _context.Fields.Where(f => f.FieldName.Trim().Contains(fieldName.Trim())).Select(f => f.FieldID).FirstOrDefault();
+                                int fieldId = _context.Fields.Where(f => f.FieldName.Trim() == fieldName.Trim()).Select(f => f.FieldID).FirstOrDefault();
                                 authorName = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString();
-                                authorId = _context.Authors.Where(a => a.AuthorName.Trim().Contains(authorName.Trim())).Select(a => a.AuthorID).FirstOrDefault();
+                                int authorId = _context.Authors.Where(a => a.AuthorName.Trim() == authorName.Trim()).Select(a => a.AuthorID).FirstOrDefault();
                                 publisherName = worksheet.Cells[row, 8].Value == null ? "" : worksheet.Cells[row, 8].Value.ToString();
-                                publisherId = _context.Publishers.Where(p => p.PublisherName.Trim().Contains(publisherName.Trim())).Select(p => p.PublisherID).FirstOrDefault();
+                                int publisherId = _context.Publishers.Where(p => p.PublisherName.Trim() == publisherName.Trim()).Select(p => p.PublisherID).FirstOrDefault();
                                 
-                                if (fieldId > 0 || authorId > 0 || publisherId > 0)
+                                if (fieldId != 0 && authorId != 0 && publisherId != 0)
                                 {
                                     list.Add(new BookDTO
                                     {
