@@ -205,7 +205,7 @@ namespace BookStoreManage.Repository
 
         public double NumberOfMoney()
         {
-            double count = _context.Orders.Sum(or => or.TotalAmount);
+            double count = _context.Orders.Where(or => or.OrderStatus == true).Sum(or => or.TotalAmount);
             return count;
         }
 
