@@ -56,12 +56,12 @@ public class OrderRepository : IOrderRepository
         return _context.Orders.OrderByDescending(a => a.OrderID).First().OrderID;
     }
 
-    public async Task UpdateStatus(int id, bool status)
+    public async Task UpdateStatus(int id, ChangeStatusDto status)
     {
-        if (status == false)
+        if (status.Status == false)
         {
             var order = await _context.Orders.FindAsync(id);
-            order.OrderStatus = status;
+            order.OrderStatus = status.Status;
 
             var _orderDetail = await _context.OrderDetails.Where(d => d.OrderID == id).Select(d => new OrderDetailDto
             {
@@ -121,8 +121,13 @@ public class OrderRepository : IOrderRepository
 
     public async Task DeleteOrder(int id)
     {
-        var detail = await FindByOrderID(id);
-        _context.Remove(detail);
-        await _context.SaveChangesAsync();
+        var order = await _context.Orders.Where(o => o.OrderID == id).FirstOrDefaultAsync();
+        if (order.OrderStatus == false)
+        {
+            _context.Remove(order);
+            await _context.SaveChangesAsync();
+        }else{
+            throw new BadHttpRequestException("Cant delete this Order because it in current delivery!");
+        }
     }
 }

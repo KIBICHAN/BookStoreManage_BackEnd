@@ -44,7 +44,11 @@ public class AuthRepository : IAuthRepository
         }
         else
         {
-            throw new BadHttpRequestException("No!");
+            throw new BadHttpRequestException("Email is not valid!");
+        }
+        if (_acc.Status == false)
+        {
+            throw new BadHttpRequestException("Your account have been block!");
         }
         return _acc;
     }
@@ -150,7 +154,7 @@ public class AuthRepository : IAuthRepository
         return _account;
     }
 
-    public async Task<JWTDto> AuthenFirebase(string idToken)
+    public async Task<JWTDto> AuthenFirebase(bool isNewUser, string idToken)
     {
         string key = "AIzaSyAwB1GD5SLBrIMuOjp6DrOUhNGjkUKPUz0";
         string jwt = "";
@@ -165,35 +169,38 @@ public class AuthRepository : IAuthRepository
         .FirstOrDefaultAsync();
         if (tagetAccount == null)
         {
-            CreateAccountDto createAccountDto = new CreateAccountDto()
+            string url = "https://localhost:7091/Auth/email-verify/true&"+idToken+"";
+            EmailDto emailDto = new EmailDto()
             {
-                AccountEmail = user.Email.ToLower(),
-                Password = "",
-                Owner = user.FirstName + user.LastName,
-                Image = user.PhotoUrl,
-                RoleID = 2
+                To = user.Email,
+                Subject = "Chào mừng đến với Bookly :D",
+                Body = "<p>Nhấn vào đường link để xác thực rằng bạn đã đăng kí tài khoàn Bookly với tài khoản Google của bạn</p> " + 
+                        "<p><a href=" + url + ">Xác thực ở đây!!!</a></p>",
             };
-            await Register(createAccountDto);
-            var _tagetAccount = await _context.Accounts.Include(a => a.Role)
-            .Where(a => a.AccountEmail == _accountRepository.Base64Encode(user.Email.ToLower()))
-            .FirstOrDefaultAsync();
-            if (_tagetAccount != null)
+            SendConfirmGoogleSignInEmail(emailDto);
+            if (isNewUser == true)
             {
-                string url = "http://localhost:3000/";
-                jwt = ReCreateFirebaseToken(_tagetAccount, uid);
-                jwtDto = new JWTDto(_tagetAccount.AccountID, _tagetAccount.AccountEmail, true, _tagetAccount.Owner, user.PhotoUrl, jwt, _tagetAccount.Role.RoleName);
-                EmailDto emailDto = new EmailDto()
+                CreateAccountDto createAccountDto = new CreateAccountDto()
                 {
-                    To = user.Email,
-                    Subject = "Chào mừng đến với Bookly!",
-                    Body = "<i>Nhấn vào đường link này để trở về trang chủ!!!</i> " + " <a href=" + url + ">link</a>",
+                    AccountEmail = user.Email.ToLower(),
+                    Password = "",
+                    Owner = user.DisplayName,
+                    Image = user.PhotoUrl,
+                    RoleID = 2
                 };
-                SendConfirmGoogleSignInEmail(emailDto);
-                return (jwtDto);
+                await Register(createAccountDto);
+                return null;
+            }else{
+                return null;
             }
         }
+        if (tagetAccount.Status == false)
+        {
+            throw new BadHttpRequestException("Your account have been block!");
+        }
+        String email = _accountRepository.Base64Decode(tagetAccount.AccountEmail);
         jwt = ReCreateFirebaseToken(tagetAccount, uid);
-        jwtDto = new JWTDto(tagetAccount.AccountID, tagetAccount.AccountEmail, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
+        jwtDto = new JWTDto(tagetAccount.AccountID, email, true, tagetAccount.Owner, user.PhotoUrl, jwt, tagetAccount.Role.RoleName);
         return (jwtDto);
     }
 

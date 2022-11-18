@@ -18,7 +18,7 @@ public class PublisherRepository : IPublisherRepository
     public async Task<List<Publisher>> GetAll()
     {
 
-        var list = await _context.Publishers.ToListAsync();
+        var list = await _context.Publishers.Include(p => p.Books).ToListAsync();
         return list;
 
     }

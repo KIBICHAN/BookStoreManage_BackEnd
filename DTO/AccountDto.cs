@@ -1,5 +1,3 @@
-using BookStoreManage.Entity;
-
 namespace BookStoreManage.DTO;
 #nullable disable
 

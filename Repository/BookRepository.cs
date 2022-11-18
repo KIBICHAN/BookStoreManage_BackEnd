@@ -73,7 +73,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getAllBook()
         {
-            var book = await _context.Books.ToListAsync();
+            var book = await _context.Books.Include(b => b.OrderDetails).ToListAsync();
             return book;
         }
 
@@ -86,7 +86,7 @@ namespace BookStoreManage.Repository
 
         public async Task<List<Book>> getByID(int idBook)
         {
-            var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Where(b => b.BookID == idBook).Select(b => new Book
+            var books = await _context.Books.Include(b => b.Author).Include(b => b.Publisher).Include(b => b.Field).Where(b => b.BookID == idBook).Select(b => new Book
             {
                 StripeID = b.StripeID,
                 BookID = b.BookID,
@@ -96,6 +96,7 @@ namespace BookStoreManage.Repository
                 Image = b.Image,
                 Description = b.Description,
                 DateOfPublished = b.DateOfPublished,
+                Field = b.Field,
                 Author = b.Author,
                 Publisher = b.Publisher
             }).ToListAsync();
@@ -141,26 +142,33 @@ namespace BookStoreManage.Repository
                         {
                             try
                             {
-                                string fieldName = worksheet.Cells[row, 6].Value.ToString();
-                                int fieldId = _context.Fields.Where(f => f.FieldName.Trim().Contains(fieldName.Trim())).Select(f => f.FieldID).FirstOrDefault();
-                                string authorName = worksheet.Cells[row, 7].Value.ToString();
-                                int authorId = _context.Authors.Where(a => a.AuthorName.Trim().Contains(authorName.Trim())).Select(a => a.AuthorID).FirstOrDefault();
-                                string publisherName = worksheet.Cells[row, 8].Value.ToString();
-                                int publisherId = _context.Publishers.Where(p => p.PublisherName.Trim().Contains(publisherName.Trim())).Select(p => p.PublisherID).FirstOrDefault();
+                                string fieldName, authorName, publisherName;
 
-                                list.Add(new BookDTO
+                                fieldName = worksheet.Cells[row, 6].Value == null ? "" : worksheet.Cells[row, 6].Value.ToString();
+                                int fieldId = _context.Fields.Where(f => f.FieldName.Trim() == fieldName.Trim()).Select(f => f.FieldID).FirstOrDefault();
+                                authorName = worksheet.Cells[row, 7].Value == null ? "" : worksheet.Cells[row, 7].Value.ToString();
+                                int authorId = _context.Authors.Where(a => a.AuthorName.Trim() == authorName.Trim()).Select(a => a.AuthorID).FirstOrDefault();
+                                publisherName = worksheet.Cells[row, 8].Value == null ? "" : worksheet.Cells[row, 8].Value.ToString();
+                                int publisherId = _context.Publishers.Where(p => p.PublisherName.Trim() == publisherName.Trim()).Select(p => p.PublisherID).FirstOrDefault();
+                                
+                                if (fieldId != 0 && authorId != 0 && publisherId != 0)
                                 {
-                                    bookName = worksheet.Cells[row, 1].Value.ToString(),
-                                    price = double.Parse(worksheet.Cells[row, 2].Value.ToString()),
-                                    quantity = Int32.Parse(worksheet.Cells[row, 3].Value.ToString()),
-                                    image = worksheet.Cells[row, 4].Value.ToString(),
-                                    description = worksheet.Cells[row, 5].Value.ToString(),
-                                    fieldID = fieldId,
-                                    publisherID = publisherId,
-                                    authorID = authorId,
-                                    DateOfPublished = DateTime.Parse(worksheet.Cells[row, 9].Value.ToString()),
-                                    stripeId = worksheet.Cells[row, 10].Value.ToString()
-                                });
+                                    list.Add(new BookDTO
+                                    {
+                                        bookName = worksheet.Cells[row, 1].Value == null ? "" : worksheet.Cells[row, 1].Value.ToString(),
+                                        price = double.Parse(worksheet.Cells[row, 2].Value == null ? "0" : worksheet.Cells[row, 2].Value.ToString()),
+                                        quantity = Int32.Parse(worksheet.Cells[row, 3].Value == null ? "0" : worksheet.Cells[row, 3].Value.ToString()),
+                                        image = worksheet.Cells[row, 4].Value  == null ? "" : worksheet.Cells[row, 4].Value.ToString(),
+                                        description = worksheet.Cells[row, 5].Value == null ? "" : worksheet.Cells[row, 5].Value.ToString(),
+                                        fieldID = fieldId,
+                                        publisherID = publisherId,
+                                        authorID = authorId,
+                                        DateOfPublished = DateTime.Parse(worksheet.Cells[row, 9].Value.ToString()),
+                                        stripeId = worksheet.Cells[row, 10].Value.ToString()
+                                    });
+                                }else{
+                                    continue;
+                                }
                             }
                             catch (Exception e)
                             {
@@ -185,7 +193,7 @@ namespace BookStoreManage.Repository
 
         public int NumberOfSold()
         {
-            int count = _context.OrderDetails.Sum(od => od.Quantity);
+            int count = _context.OrderDetails.Where(ors => ors.Order.OrderStatus == true).Sum(od => od.Quantity);
             return count;
         }
 
@@ -197,7 +205,7 @@ namespace BookStoreManage.Repository
 
         public double NumberOfMoney()
         {
-            double count = _context.Orders.Sum(or => or.TotalAmount);
+            double count = _context.Orders.Where(or => or.OrderStatus == true).Sum(or => or.TotalAmount);
             return count;
         }
 

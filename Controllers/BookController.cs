@@ -3,8 +3,6 @@ using BookStoreManage.Entity;
 using BookStoreManage.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -82,7 +80,8 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [Authorize(Roles = "Customer")]
+        //[Authorize(Roles = "Customer")]
+        [AllowAnonymous]
         [HttpGet("SixBookBestSeller")]
         public async Task<ActionResult> getSixBookBestSeller()
         {
@@ -97,7 +96,7 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin,Staff")]
+        [Authorize(Roles = "Admin,Staff")]
         [HttpGet("TotalOfBook")]
         public ActionResult NumberOfBook()
         {
@@ -112,7 +111,8 @@ namespace BookStoreManage.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin,Staff")]
+        //[Authorize(Roles = "Admin,Staff")]
+        [AllowAnonymous]
         [HttpGet("NumberOfSold")]
         public ActionResult NumberOfSold()
         {

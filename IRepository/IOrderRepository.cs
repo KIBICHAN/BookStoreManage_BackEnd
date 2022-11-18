@@ -11,7 +11,7 @@ public interface IOrderRepository {
 
     Task<OrderDetail> FindByOrderDetailID(int id);
     Task<int> CreateNewOrder(int accountId);
-    Task UpdateStatus(int id, bool status);
+    Task UpdateStatus(int id, ChangeStatusDto status);
     Task CreateNewOrderDetail(List<OrderDetailDto> _list);
     Task DeleteOrder(int id);
 }

@@ -8,7 +8,6 @@ namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-[Authorize(Roles = "Admin")]
 public class AccountController : ControllerBase
 {
     private readonly IAccountRepository _accountRepository;
@@ -19,6 +18,7 @@ public class AccountController : ControllerBase
         _authRepository = authRepository;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("Get")]
     public async Task<ActionResult<List<Account>>> GetAll()
     {
@@ -48,6 +48,7 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetByName/{name}")]
     public async Task<ActionResult<List<Account>>> GetName(string name)
     {
@@ -77,6 +78,7 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin,Staff")]
     [HttpGet("GetByRole/{roleId}")]
     public async Task<ActionResult<List<Account>>> GetByRole(int roleId)
     {
@@ -106,6 +108,7 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("GetById/{id}")]
     public async Task<ActionResult<Account>> GetId(int id)
     {
@@ -132,6 +135,7 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("Create")]
     public async Task<ActionResult<Account>> CreateAccount(CreateAccountDto request)
     {
@@ -146,6 +150,7 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("Update/{id}")]
     public async Task<ActionResult> EditAccount(int id, AccountDto account)
     {
@@ -160,12 +165,13 @@ public class AccountController : ControllerBase
         }
     }
 
-    [HttpPut("ChangeStatus/{id}")]
-    public async Task<ActionResult> ChangeStatus(int id, bool status)
+    [Authorize(Roles = "Admin")]
+    [HttpPut("ChangeStatus")]
+    public async Task<ActionResult> ChangeStatus(int id, ChangeStatusDto status)
     {
         try
         {
-            await _accountRepository.ChangeStatus(status, id);
+            await _accountRepository.ChangeStatus(id, status);
             return Ok();
         }
         catch (Exception e)
@@ -174,6 +180,7 @@ public class AccountController : ControllerBase
         }
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpDelete("Delete/{id}")]
     public async Task<ActionResult> DeleteAccount(int id)
     {

@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStoreManage.Controllers;
 
 [Route("[controller]")]
+[Authorize(Roles = "Customer,Admin,Staff")]
 [ApiController]
-[Authorize(Roles = "Customer")]
 public class OrderController : ControllerBase
 {
     private readonly IOrderRepository _orderRepository;
@@ -74,7 +74,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPut("UpdateStatus/{id}")]
-    public async Task<ActionResult> UpdateStatus(int id, bool status)
+    public async Task<ActionResult> UpdateStatus(int id, ChangeStatusDto status)
     {
         try
         {
